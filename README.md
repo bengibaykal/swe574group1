@@ -1,4 +1,4 @@
-# swe574group1
+# SWE 574 Project Group1
 
 Project repo consist of :
 
