@@ -1,0 +1,10 @@
+Babel==2.8.0
+certifi==2019.11.28
+chardet==3.0.4
+idna==2.8
+pycparser==2.19
+pytz==2019.3
+pywikibot==3.0.20200111
+requests==2.22.0
+urllib3==1.25.8
+Wikidata==0.6.1
