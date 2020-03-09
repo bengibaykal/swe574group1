@@ -1,6 +1,6 @@
 # SWE 574 Project - Group React-ion <img width="20" alt="Group icon" src="https://user-images.githubusercontent.com/55947787/75067562-5c964600-54fe-11ea-9f12-0838f4d22e53.jpg">
 
-<img width="500" alt="Group icon" src="https://github.com/bengibaykal/swe574group1/blob/master/Research_Files/Reaction-2.png">
+<img width="500" alt="Group icon" src="https://user-images.githubusercontent.com/3228918/76172196-72fdfc00-61a4-11ea-8614-bf601f317eff.jpg">
 
 Project repo consist of : ( 17.02.2020 , will be updated accordingly )
 
