@@ -1,0 +1,40 @@
+{% extends "index.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+{% block wrapper %}
+    <!-- Masthead -->
+    <div class="col-md-10 col-lg-10 col-xl-10 mx-auto">
+        <table id="table_id" class="display" style="width: 100%;">
+            <thead>
+            <tr>
+                <th>Community Name</th>
+                <th>Tags</th>
+                <th>#Users</th>
+                <th>Created By</th>
+                <th>Join</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for comm in comms %}
+                <tr>
+                    <td>{{ comm.name }}</td>
+                    <td>{% for tag in comm.tags.all %}{{ tag.name }} {% endfor %}</td>
+                    <td>{{ comm.joined_users.count }}</td>
+                    <td>{{ comm.created_by.username }}</td>
+                     <td><button onclick="location.href='login'">Login</button></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+<script>
+    $(document).ready(function () {
+        $('#table_id').DataTable();
+    });
+</script>
+
+
+</html>

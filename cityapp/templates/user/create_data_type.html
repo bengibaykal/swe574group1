@@ -1,0 +1,188 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+{% block wrapper %}
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.1/jquery.rateyo.min.css">
+    <link href="{% static "css/main.css" %}" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    <script src="https://formbuilder.online/assets/js/form-builder.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.1/jquery.rateyo.min.js"></script>
+
+
+    <row>
+        <div class="col-md-8 col-lg-8 col-xl-8 mx-auto">
+
+            <div class="col-md-8 col-lg-8 col-xl-8 mx-auto">
+                <h1 class="h3 mb-0 text-gray-800">{{ data_type.name }}</h1>
+            </div>
+            <div class="comm-form-base">
+                <div class="form-group">
+                    <div class="col-md-4 col-lg-4 col-xl-4 mx-auto">
+                        <h1 class="h3 mb-0 text-gray-800">Build Data Type</h1>
+                    </div>
+                    <h5 class="mb-0 text-gray-800">Name</h5>
+                    <input name="name" type="name" class="form-control form-control-user" id="data_type_name"
+                           aria-describedby="nameHelp" placeholder="Enter name">
+                    <br>
+                    <h5 class="mb-0 text-gray-800">Description</h5>
+                    <input name="description" type="name" class="form-control form-control-user"
+                           id="data_type_description"
+                           aria-describedby="nameHelp" placeholder="Enter description">
+                    <div style="margin: 20px 0 20px 0">
+                        <h5 class="mb-0 text-gray-800">Tags</h5>
+                        <select id="myTags" size="8" style="width: 100%;"></select>
+                        </select>
+                        <p>To add a tag in the list, click the "Add" button.</p>
+                        <input name="one_tag" type="name"
+                               class="form-control form-control-user col-md-4 col-lg-4 col-xl-4"
+                               id="one_tag"
+                               aria-describedby="tagHelp" placeholder="Enter tag">
+                        <button onclick="tag_select()">Add</button>
+                        <button onclick="removeOption()">
+                            Remove Tag
+                        </button>
+                    </div>
+                </div>
+                <h5 class="mb-0 text-gray-800">Template</h5>
+                <div class="data-type-builder">
+                    {% csrf_token %}
+
+                    <div id="build-wrap"></div>
+                </div>
+
+
+                <div class="col-md-4 col-lg-4 col-xl-4 mx-auto" style="text-align: center;margin-bottom: 20px">
+                    <textarea hidden id="form_data"></textarea>
+                    <button class="btn-success" style="border-radius: 6px;width: 83px;height: 40px;"
+                            onclick="send_json();">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </row>
+    <script>
+
+        var count = 0;
+        var fields = [
+            {
+                label: "Location",
+                name: "location",
+                type: "text",
+                className: "form-control location",
+                icon: "📍"
+            }
+        ];
+        var options = {
+            disableFields: ['autocomplete', 'button', 'checkbox-group', 'header',
+                'radio-group', 'text-field', 'hidden', 'data-action', 'paragraph'],
+            disabledActionButtons: ["save"],
+            disabledAttrs: ["value", "placeholder", "class", 'access', 'className', 'description',
+                'inline', 'label', 'max', 'maxlength', 'min', 'multiple',
+                'other', 'placeholder', 'rows', 'step', 'style', 'subtype', 'toggle', 'value'],
+            editOnAdd: true,
+            fields: fields,
+            onSave: function (formData) {
+
+                $('.render-wrap').formRender({formData});
+                window.sessionStorage.setItem('formData', JSON.stringify(formData));
+            },
+        };
+        const fbTemplate = document.getElementById('build-wrap');
+        var formBuilder = $(fbTemplate).formBuilder(options);
+
+        $("#form_data").val("");
+        document.addEventListener('fieldAdded', function () {
+            $("#form_data").val(formBuilder.formData);
+            count++;
+
+        });
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        var send_json = function () {
+            var tags = new Array();
+            $('#myTags option').each(function () {
+                tags.push($(this).val());
+            });
+            console.log(tags);
+            var name = $("#data_type_name").val();
+            var description = $("#data_type_description").val();
+            var formData = formBuilder.formData;
+            var json_formData = JSON.parse(formData);
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+            console.log(formData);
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "community:data-type-create" community_id %}",
+                data: {tag: tags, name, description, json_formData, count},
+                success: function (data) {
+                    var created_id = data["post_template_id"];
+                    window.location = "/data-types/" + created_id;
+                },
+            })
+        };
+
+
+        jQuery($ => {
+
+        });
+
+        $('#data_type_name').on('keyup', function () {
+            if (this.value.length < 4) return;
+            $("#myTags").empty();
+            var name = $("#data_type_name").val();
+            $.ajax({
+                method: "GET",
+                url: "https://www.wikidata.org/w/api.php?action=wbsearchentities&language=en&format=json&origin=*&search=" + name,
+                success: function (data) {
+                    var d = document.getElementById("myTags");
+                    var option = document.createElement("option");
+                    for (var i = 0; i < 5; i++) {
+                        option.text = data.search[i].label;
+                        $("#one_tag").val("");
+                        d.add(option, d[i])
+                    }
+                },
+            });
+            return false;
+        });
+
+        var tag_select = function tag_select() {
+            var d = document.getElementById("myTags");
+            var option = document.createElement("option");
+            option.text = $("#one_tag").val();
+            $("#one_tag").val("");
+            d.add(option, d[1])
+        };
+
+        $(".deleteMe").on("click", function () {
+            $(this).closest("li").remove();
+        });
+
+        function removeOption() {
+
+            /* select the option with the
+            value of basic and remove the option*/
+            $('#myTags option:selected').remove();
+        }
+
+    </script>
+{% endblock %}
+
+</html>

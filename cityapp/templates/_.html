@@ -1,0 +1,41 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Community&Stuff</title>
+    <link href="{% static "css/main.css" %}" rel="stylesheet">
+</head>
+<body>
+<header>
+    <div class="header">
+        <div class="login"><a href="#">Login/Register</a></div>
+    </div>
+</header>
+
+<div class="main">
+    <div class="search">
+        <input type="text" placeholder="Search..">
+    </div>
+    <div class="popular">
+        <div class="popular-communities"><h3>Popular Communities</h3>
+             <ul>
+                {% for community in communities %}
+                <li>{{community.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="popular-posts"><h3>Popular Posts</h3>
+            <ul>
+                {% for community in communities %}
+                <li>{{community.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<footer></footer>
+</body>
+</html>

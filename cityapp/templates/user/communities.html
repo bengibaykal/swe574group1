@@ -1,0 +1,38 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+{% block wrapper %}
+    <!-- Masthead -->
+    <div class="col-md-10 col-lg-10 col-xl-10 mx-auto">
+        <table id="table_id" class="display" style="width: 100%;">
+            <thead>
+            <tr>
+                <th>Community Name</th>
+                <th>Tags</th>
+                <th>#Users</th>
+                <th>Created By</th>
+                <th>Join</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for comm in comms %}
+                <tr>
+                    <td><a href="{% url "community:community-detail" comm.id %}">{{ comm.name }}</a></td>
+                    <td>{% for tag in comm.tags.all %}{{ tag.name }} {% endfor %}</td>
+                    <td>{{ comm.joined_users.count }}</td>
+                    <td>{{ comm.created_by.username }}</td>
+                {% if user not in comm.joined_users.all %}
+                     <td><a class="button" href="{% url "community:join-community" comm.id %}">Join</a></td>
+                    {% else %}
+                    <td>Joined</td>
+                {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+</html>

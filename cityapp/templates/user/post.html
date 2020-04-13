@@ -1,0 +1,110 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+{% block head_css %}
+    <style>
+        .h-100 {
+            height: auto !important;
+        }
+
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+        }
+    </style>
+{% endblock %}
+
+
+{% block wrapper %}
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">{{ post.name }}</h1>
+        </div>
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            {% for tag in post.tags.all %}
+                <a href="#">#{{ tag.name }}</a>
+            {% endfor %}
+        </div>
+        <div class="row">
+            {% for key,value in post.post_content.items %}
+                {% if key == "name" %}
+                {% elif key == "description" %}
+                {% elif value.url %}
+                    <div class="col-lg-6">
+
+                        <!-- Illustrations -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">{{ key }}</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
+                                         src="/media/{{ value.url }}" alt="">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                {% elif value|make_list|slice:'1'|join:'' == "*" %}
+                    <div class="col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">{{ key }}</h6>
+                            </div>
+                            <input id="location" hidden value="{{ value|make_list|slice:'1:'|join:'' }}">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div class="col-lg-6">
+                {% for key,value in post.post_content.items %}
+                    {% if key == "name" %}
+                    {% elif key == "description" %}
+                    {% elif value.url %}
+                    {% elif value|make_list|slice:'1'|join:'' == "*" %}
+                    {% else %}
+
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">{{ key }}</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body">
+                                {{ value }}
+                            </div>
+                        </div>
+
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        function initMap() {
+            // The location of Uluru
+            var location_string = $("#location").val().split(",");
+            var lat = location_string[0];
+            var lon = location_string[1];
+
+            var uluru = {lat: parseFloat(lat), lng: parseFloat(lon)};
+            // The map, centered at Uluru
+            var map = new google.maps.Map(
+                document.getElementById('map'), {zoom: 4, center: uluru});
+            // The marker, positioned at Uluru
+            var marker = new google.maps.Marker({position: uluru, map: map});
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDX0K8j8RSzk2VyXi3Eks1cy-muY2FmD50&callback=initMap">
+    </script>
+{% endblock %}
+
+
+</html>

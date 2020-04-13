@@ -1,0 +1,114 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+{% block wrapper %}
+    <div class="container-fluid">
+
+        <div class="col-md-8 col-lg-8 col-xl-8 mx-auto">
+            <h1 class="h3 mb-0 text-gray-800">{{ data_type.name }}</h1>
+        </div>
+        <div class="row">
+
+            <div class="col-md-8 col-lg-8 col-xl-8 mx-auto">
+                <form enctype="multipart/form-data" class="comm-form-base" method="post"
+                      action="{% url "community:data-type-detail" data_type.id %}">{% csrf_token %}
+                    <input name="name" type="name" class="form-control form-control-user" id="data_type_name"
+                           aria-describedby="nameHelp" placeholder="Enter name" style="
+margin-bottom: 20px;">
+                    <input name="description" type="name" class="form-control form-control-user" id="data_type_description"
+                           aria-describedby="nameHelp" placeholder="Enter description" style="
+margin-bottom: 20px;">
+                    <input name="tags" type="tags" class="form-control form-control-user" id="data_type_tags"
+                           aria-describedby="tagsHelp" placeholder="Tags" style="
+margin-bottom: 20px;">
+                    <div class="col-lg-12">
+                        <div id="form" class=""></div>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-xl-4 mx-auto" style="text-align: center;margin-bottom: 20px">
+                        <textarea hidden id="form_data"></textarea>
+                        <button class="btn-success" style="border-radius: 6px;width: 83px;height: 40px;">
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="res" class="alert"></div>
+    <script type="text/javascript" src="{% static  "formRender/underscore.js" %}"></script>
+    <script type="text/javascript" src="{% static  "formRender/jsv.js" %}"></script>
+    <script type="text/javascript" src="{% static  "formRender/jsonform.js" %}"></script>
+    <script type="text/javascript">
+
+        String.format = function () {
+            var s = arguments[0];
+            for (var i = 0; i < arguments.length - 1; i++) {
+                var reg = new RegExp("\\{" + i + "\\}", "gm");
+                s = s.replace(reg, arguments[i + 1]);
+            }
+            return s;
+        };
+
+
+        var send_json = function (event) {
+            event.preventDefault();
+            var data = new FormData($('#form').get(0));
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "community:data-type-detail" data_type.id %}",
+                data: data,
+                success: function (data) {
+                    console.log(data);
+                },
+            });
+            return false;
+        };
+
+        var json_string_malformed = '{{ data_type.custom_template }}';
+        var json_string_edit1 = json_string_malformed.replace(/&quot;/g, '"');
+        var json_string_edit2 = json_string_edit1.replace(/&#39;/g, '"');
+        var json_obj = JSON.parse(json_string_edit2);
+        var form_schema = {};
+        var keys = Object.keys(json_obj);
+        var last = keys[keys.length - 1];
+        console.log(json_obj);
+        for (var i = 0; i < parseInt(json_obj["count"]); i++) {
+            var enum_list = [];
+            var key_name = String.format("json_formData[{0}][name]", i);
+            var key_type = String.format("json_formData[{0}][type]", i);
+            console.log(json_obj[key_type]);
+            if (json_obj[key_type] == "select") {
+                for (var j = 0; j < 5; j++) {
+                    enum_list.push(json_obj[String.format("json_formData[{0}][values][{1}][value]", i, j)]);
+                }
+                form_schema[json_obj[key_name]] = {"type": json_obj[key_type], enum: enum_list}
+            } else {
+                form_schema[json_obj[key_name]] = {"type": json_obj[key_type]}
+            }
+        }
+        console.log(form_schema);
+        $('#form').jsonForm({
+            schema: form_schema,
+        });
+
+        $(function () {
+            $('#form').submit(send_json());
+        });
+
+
+    </script>
+
+
+
+{% endblock %}
+
+</html>

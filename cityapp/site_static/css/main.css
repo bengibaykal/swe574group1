@@ -1,0 +1,18 @@
+.data-type-builder {
+    box-shadow: 2px 5px #c2bdb92b;
+    margin-bottom: 37px;
+    border-radius: 8px;
+    margin-top: 10px;
+    background-color: white;
+}
+
+.comm-form-base {
+    background: #ffffff;
+    min-height: 500px;
+    padding: 50px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 2px 2px 3px 2px #78787870;
+}
+
+
