@@ -98,13 +98,24 @@ WSGI_APPLICATION = 'cityapp.wsgi.application'
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'swe'
+#                '573',
+#        'USER': 'gurbuz',
+#        'PASSWORD': '',
+#        'HOST': 'localhost',
+#        'PORT': '5432',
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'swe'
-                '573',
-        'USER': 'gurbuz',
-        'PASSWORD': '',
+        'NAME': 'swe574_evren',
+        'USER': 'postgres',
+        'PASSWORD': 'Seneevo1992',
         'HOST': 'localhost',
         'PORT': '5432',
     }
