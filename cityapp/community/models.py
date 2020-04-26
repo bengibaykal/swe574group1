@@ -48,6 +48,7 @@ class Community(TimeStamped):
     description = models.CharField(max_length=55, blank=True, null=True)
     joined_users = models.ManyToManyField(CommunityUser)
     tags = models.ManyToManyField(Tag, related_name="community_tags")
+    public_option = models.BooleanField(default=True)
 
     def __str__(self):
         return smart_unicode(self.name)
@@ -94,6 +95,9 @@ class Post(TimeStamped):
     post_template = models.ForeignKey(PostTemplate, related_name="post_template", on_delete=models.CASCADE, blank=True,
                                       null=True)
     post_content = JSONField(null=True)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    audio_version = models.FileField(max_length=55, null=True)
 
     def __str__(self):
         return smart_unicode(self.name)
