@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'community_user',
     'rest_framework_swagger',
     'community',
-    'corsheaders'
+    'corsheaders',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
