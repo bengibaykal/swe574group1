@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'community',
     'corsheaders',
     'django_extensions'
+    'city'
 ]
 
 MIDDLEWARE = [
