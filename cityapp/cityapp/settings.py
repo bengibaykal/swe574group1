@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'community',
     'corsheaders',
-    'django_extensions'
+    'django_extensions',
     'city'
 ]
 
