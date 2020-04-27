@@ -12,4 +12,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('community.urls')),
     path('api/', include(api_urls)),
+    path('activity/', include('actstream.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

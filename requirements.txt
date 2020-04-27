@@ -21,3 +21,4 @@ simplejson==3.16.0
 sqlparse==0.3.0
 uritemplate==3.0.0
 urllib3==1.25.7
+django-activity-stream~=0.8.0

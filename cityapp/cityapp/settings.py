@@ -47,7 +47,9 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'community',
     'corsheaders',
-    'django_extensions'
+    'django_extensions',
+    'django.contrib.sites',
+    'actstream'
 ]
 
 MIDDLEWARE = [
@@ -119,6 +121,15 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
     }
+}
+
+# Activity Stream Settings
+ACTSTREAM_SETTINGS = {
+    'MANAGER': 'community.managers.MyActionManager',
+    'FETCH_RELATIONS': True,
+    'USE_PREFETCH': True,
+    'USE_JSONFIELD': False,
+    'GFK_FETCH_DEPTH': 1,
 }
 
 # Password validation
