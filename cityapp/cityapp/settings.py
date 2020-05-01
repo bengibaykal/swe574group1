@@ -101,9 +101,8 @@ WSGI_APPLICATION = 'cityapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'swe'
-                '573',
-        'USER': 'gurbuz',
+        'NAME': 'django-test',
+        'USER': 'dodo',
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '5432',
