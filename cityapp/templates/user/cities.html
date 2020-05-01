@@ -1,0 +1,27 @@
+<html>
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+<body>
+<p>Cities List</p>
+
+<p> <a href= {% url "city:create-city" %}>CreateNewCity</a> </p>
+{% for city in cities %}
+    <tr>
+        <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="{{ city.image.url }}">
+        <div class="card-body">
+            <h5 class="card-title"><a href="{% url "city:detail-city" city.name %}"> {{ city.name }}</a></h5>
+            <p class="card-text">{{ city.country_name }}</p>
+        </div>
+    </div>
+    </tr>
+
+{% endfor %}
+
+
+</body>
+</html>
