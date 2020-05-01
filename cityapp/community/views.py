@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+import actstream
+from actstream import models
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import status
 from django.shortcuts import redirect
 from community.models import *
 from django.shortcuts import render
 from community.models import *
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth import logout
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -23,6 +27,9 @@ from community_user.serializers import *
 
 
 # Create your views here.
+from community_user.models import CommunityUser
+
+
 class IndexTemplateView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "index.html"
@@ -289,3 +296,14 @@ class JoinCommunityTemplateView(APIView):
         community.joined_users.add(request.user)
         Subscription.objects.create(created_by=self.request.user, joined_community=community)
         return redirect("community:community-detail", community.id)
+
+# User Notification View with Simple Template
+USER_MODEL = get_user_model()
+def notification(request):
+    return render(request, 'user/user_notification.html',
+                  context={
+            'ctype': ContentType.objects.get_for_model(USER_MODEL),
+            'actor': request.user,
+            'action_list': actstream.models.user_stream(request.user)
+        }
+    )
