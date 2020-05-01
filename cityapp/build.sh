@@ -6,4 +6,4 @@ source testenv/bin/activate
 # Install Requirements
 pip3 install -r ../requirements.txt
 # Run tests
-python manage.py test
+python3 manage.py test
