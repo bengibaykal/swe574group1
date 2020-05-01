@@ -4,6 +4,6 @@ python3.6 -m venv testenv
 source testenv/bin/activate
 
 # Install Requirements
-pip3 install -r requirements.txt
+pip3 install -r ../requirements.txt
 # Run tests
 python manage.py test
