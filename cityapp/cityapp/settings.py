@@ -48,8 +48,8 @@ INSTALLED_APPS = [
     'community',
     'corsheaders',
     'django_extensions',
-    'django.contrib.sites',
-    'actstream'
+    'django.contrib.sites', # Actstream Integration
+    'actstream' # Actstream App
 ]
 
 MIDDLEWARE = [

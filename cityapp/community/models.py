@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from actstream import action
+from django.db.models.signals import post_save
 from django.utils.encoding import smart_text as smart_unicode
 from community_user.models import CommunityUser
 from django.db import models
@@ -53,6 +56,13 @@ class Community(TimeStamped):
     def __str__(self):
         return smart_unicode(self.name)
 
+# Creating Action Instances by Using Django Signals & Actstream Action
+def save_community(sender, instance, **kwargs):
+    action.send(instance.created_by, verb="Has Created A New Community - ", target=instance)
+
+
+post_save.connect(save_community, sender=Community)
+
 
 class CommunityForm(ModelForm):
     class Meta:
@@ -84,6 +94,12 @@ class PostTemplate(TimeStamped):
     created_by = models.ForeignKey(CommunityUser, related_name="template_author", on_delete=models.CASCADE, blank=True,
                                    null=True)
 
+# Creating Action Instances by Using Django Signals & Actstream Action
+def save_posttemplate(sender, instance, **kwargs):
+    action.send(instance.created_by, verb="Has Created A New Post Template - ", target=instance)
+
+
+post_save.connect(save_posttemplate, sender=PostTemplate)
 
 class Post(TimeStamped):
     name = models.CharField(max_length=55, blank=True, null=True)
@@ -102,6 +118,12 @@ class Post(TimeStamped):
     def __str__(self):
         return smart_unicode(self.name)
 
+# Creating Action Instances by Using Django Signals & Actstream Action
+def save_post(sender, instance, **kwargs):
+    action.send(instance.created_by, verb="Has Created A New Post - ", target=instance)
+
+
+post_save.connect(save_post, sender=Post)
 
 class DataFileField(TimeStamped):
     name = models.CharField(max_length=55)

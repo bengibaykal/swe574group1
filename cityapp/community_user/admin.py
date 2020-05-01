@@ -11,8 +11,11 @@ from django.apps import apps
 
 admin.site.register(CommunityUser)
 
-#models = apps.get_models()
+# Below Auto-Registry Method Has Been Disabled Since It Registers the Django-Activity-Stream Models As Well.
+# Since It Registers The Actstream Models, It Creates a Bug.
+# Therefore Instead of Auto-Registry, Manual Registry Started to be Used.
 
+#models = apps.get_models()
 #for model in models:
 #    try:
 #        admin.site.register(model)
