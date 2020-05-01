@@ -1,0 +1,135 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+{% block wrapper %}
+    <div class="row">
+            <div id="comm_alert" class="alert alert-danger col-xl-12 col-md-12" role="alert" style="display: none;">
+                A city with the same name already exists
+            </div>
+    </div>
+    <div class="row">
+        {% csrf_token %}
+        <div class="col-md-8 col-lg-8 col-xl-8 mx-auto">
+            <div class="comm-form-base">
+                <div class="form-group">
+                    <div class="col-md-6 col-lg-6 col-xl-6 mx-auto">
+                        <h1 class="h3 mb-0 text-gray-800">Create City</h1>
+                    </div>
+                    <h5 class="mb-0 text-gray-800">City Name</h5>
+                    <input name="name" type="name" class="form-control form-control-user" id="city_name"
+                           aria-describedby="nameHelp" placeholder="Enter City name">
+                    <br>
+                    <h5 class="mb-0 text-gray-800">Country</h5>
+                    <input name="description" type="name" class="form-control form-control-user"
+                           id="country_name"
+                           aria-describedby="nameHelp" placeholder="Enter Country name">
+                    <!------ Include the above in your HEAD tag ---------->
+
+                    <div class="container">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Upload Image</label>
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <span class="btn btn-default btn-file">
+                                        Browse… <input type="file" id="imgInp">
+                                    </span>
+                                </span>
+                                <input type="text" id="imageName" class="form-control" readonly>
+                            </div>
+                            <img id='img-upload'/>
+                        </div>
+                    </div>
+                    </div>
+                     <button class="btn-success" style="border-radius: 6px;width: 83px;height: 40px;"
+                            onclick="send_json();">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        var send_json = function () {
+            console.log("In");
+            var name = $("#city_name").val();
+            var country_name = $("#country_name").val();
+            var image = $("#imageName").val();
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "city:create-city" %}",
+                data: {name, country_name, image},
+                success: function (data) {
+                    var cityName = data["name"];
+                    console.log("CITY NAME " + cityName)
+                    if(cityName) {
+                        window.location = "/cities/detail/" + cityName;
+                    }
+                    else{
+                        $("#comm_alert").show();
+                    }
+                },
+            })
+        };
+
+    </script>
+
+    <script>
+    $(document).ready( function() {
+    	$(document).on('change', '.btn-file :file', function() {
+		var input = $(this),
+			label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+		input.trigger('fileselect', [label]);
+		});
+
+		$('.btn-file :file').on('fileselect', function(event, label) {
+
+		    var input = $(this).parents('.input-group').find(':text'),
+		        log = label;
+
+		    if( input.length ) {
+		        input.val(log);
+		    } else {
+		        if( log ) alert(log);
+		    }
+
+		});
+		function readURL(input) {
+		    if (input.files && input.files[0]) {
+		        var reader = new FileReader();
+
+		        reader.onload = function (e) {
+		            $('#img-upload').attr('src', e.target.result);
+		        }
+
+		        reader.readAsDataURL(input.files[0]);
+		    }
+		}
+
+		$("#imgInp").change(function(){
+		    readURL(this);
+		});
+	});
+    </script>
+{% endblock %}
+
+
+</html>
