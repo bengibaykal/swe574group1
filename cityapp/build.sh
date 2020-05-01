@@ -1,7 +1,7 @@
 #!/bin/bash
 export WORKSPACE=`pwd`
-virtualenv venv
-source venv/bin/activate
+python3.6 -m venv testenv
+source testenv/bin/activate
 
 # Install Requirements
 pip install -r requirements.txt
