@@ -130,3 +130,4 @@ class UserLoginAPIViewTestCase(APITestCase):
 #             self.assertEqual(200, response.status_code)
 #             self.assertEqual(self.token.key, response.data['auth_token'])
 #             self.assertIn('created', response.data)
+#

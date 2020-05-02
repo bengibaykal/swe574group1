@@ -94,6 +94,7 @@ WSGI_APPLICATION = 'cityapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+<<<<<<< HEAD
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -120,8 +121,24 @@ DATABASES = {
         'PASSWORD': 'Seneevo1992',
         'HOST': 'localhost',
         'PORT': '5432',
+=======
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+>>>>>>> master
     }
 }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'django-test',
+#         'USER': 'dodo',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 # Activity Stream Settings
 ACTSTREAM_SETTINGS = {
