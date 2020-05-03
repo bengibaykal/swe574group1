@@ -21,7 +21,8 @@ urlpatterns = [
     path('data-type-create/<int:community_id>', CreateDataTypeTemplateView.as_view(), name="data-type-create"),
     path('join-community/<int:joined_community>', JoinCommunityTemplateView.as_view(), name="join-community"),
     path('stream/', notification, name='user_notification'),
-    path('stream/x2', feeds.UserJSONActivityFeed_V2.as_view(), name='actstream_feed_json'),
+    path('stream/json', feeds.UserJSONActivityFeed_V2.as_view(), name='actstream_feed_json'),
+    path('joined-communites-list', JoinedCommunitiesListTemplateView.as_view(), name="joined-communities-list"),
 
 
 ]

@@ -311,3 +311,15 @@ def notification(request):
                       'communities': communities
                   }
                   )
+
+
+# Class for Joined Communities List
+class JoinedCommunitiesListTemplateView(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/joined_communities.html'
+
+    def get(self, request):
+        communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
+        queryset = Community.objects.filter(joined_users=self.request.user)
+        return Response({'comms': queryset, "user": request.user, "communities": communities})
