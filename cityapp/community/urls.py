@@ -20,7 +20,7 @@ urlpatterns = [
     path('posts-create/<int:community_id>', CreatePostTemplateView.as_view(), name="posts-create"),
     path('data-type-create/<int:community_id>', CreateDataTypeTemplateView.as_view(), name="data-type-create"),
     path('join-community/<int:joined_community>', JoinCommunityTemplateView.as_view(), name="join-community"),
-    path('stream/', notification, name='user_notifiction'),
+    path('stream/', notification, name='user_notification'),
     path('stream/x2', feeds.UserJSONActivityFeed_V2.as_view(), name='actstream_feed_json'),
 
 

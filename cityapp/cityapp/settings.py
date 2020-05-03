@@ -46,10 +46,11 @@ INSTALLED_APPS = [
     'community_user',
     'rest_framework_swagger',
     'community',
+    'activity_streamv2',
     'corsheaders',
     'django_extensions',
-    'django.contrib.sites', # Actstream Integration
-    'actstream' # Actstream App
+    'django.contrib.sites',  # Actstream Integration
+    'actstream'  # Actstream App
 ]
 
 SITE_ID = 1
@@ -97,7 +98,7 @@ WSGI_APPLICATION = 'cityapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-#DATABASES = {
+# DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -114,29 +115,30 @@ WSGI_APPLICATION = 'cityapp.wsgi.application'
 #        'HOST': 'localhost',
 #        'PORT': '5432',
 #    }
-#}
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'swe574_db',
-        'USER': 'postgres',
-        'PASSWORD': 'Seneevo1992',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+# }
 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'django-test',
-#         'USER': 'dodo',
-#         'PASSWORD': '',
+#         'NAME': 'swe574_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Seneevo1992',
 #         'HOST': 'localhost',
 #         'PORT': '5432',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'swe'
+                '573',
+        'USER': 'gurbuz',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 # Activity Stream Settings
 ACTSTREAM_SETTINGS = {

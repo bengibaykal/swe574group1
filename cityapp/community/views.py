@@ -25,7 +25,6 @@ from django.forms import modelform_factory
 from django.http import JsonResponse
 from community_user.serializers import *
 
-
 # Create your views here.
 from community_user.models import CommunityUser
 
@@ -297,13 +296,18 @@ class JoinCommunityTemplateView(APIView):
         Subscription.objects.create(created_by=self.request.user, joined_community=community)
         return redirect("community:community-detail", community.id)
 
+
 # User Notification View with Simple Template
 USER_MODEL = get_user_model()
+
+
 def notification(request):
-    return render(request, 'user/user_notification.html',
+    communities = Community.objects.filter(joined_users=request.user)
+    return render(request, 'user/activity.html',
                   context={
-            'ctype': ContentType.objects.get_for_model(USER_MODEL),
-            'actor': request.user,
-            'action_list': actstream.models.user_stream(request.user)
-        }
-    )
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'action_list': actstream.models.user_stream(request.user),
+                      'communities': communities
+                  }
+                  )
