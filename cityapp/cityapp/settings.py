@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'actstream' # Actstream App
 ]
 
+SITE_ID = 1
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -95,12 +97,12 @@ WSGI_APPLICATION = 'cityapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.sqlite3',
-         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-     }
- }
+#DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 # DATABASES = {
 #    'default': {
@@ -114,16 +116,16 @@ DATABASES = {
 #    }
 #}
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'swe574_db',
-#        'USER': 'postgres',
-#        'PASSWORD': 'Seneevo1992',
-#        'HOST': 'localhost',
-#        'PORT': '5432',
-#    }
-#}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'swe574_db',
+        'USER': 'postgres',
+        'PASSWORD': 'Seneevo1992',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 # DATABASES = {
 #     'default': {

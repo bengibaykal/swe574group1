@@ -1,6 +1,7 @@
 from django.urls import path
 from community.views import *
 
+from community import feeds
 
 app_name = 'community'
 
@@ -20,6 +21,7 @@ urlpatterns = [
     path('data-type-create/<int:community_id>', CreateDataTypeTemplateView.as_view(), name="data-type-create"),
     path('join-community/<int:joined_community>', JoinCommunityTemplateView.as_view(), name="join-community"),
     path('stream/', notification, name='user_notifiction'),
+    path('stream/x2', feeds.UserJSONActivityFeed_V2.as_view(), name='actstream_feed_json'),
 
 
 ]
