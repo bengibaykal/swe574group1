@@ -87,9 +87,7 @@ class CreateDataType(CreateAPIView):
         return Response(instance_serializer.data)
 
 
-# bunların sadece 1 posta özgü olacak şekilde düzenlenmesi lazım.
-# create + list view da olmalı ayrıca
-
+# Create Comment for Any Post
 class CommentCreateAPIView(CreateAPIView, ListModelMixin):
     queryset = Comment.objects.order_by("-created")
     permission_classes = (IsAuthenticated,)
@@ -102,6 +100,7 @@ class CommentCreateAPIView(CreateAPIView, ListModelMixin):
         return serializer.save(created_by = self.request.user)
 
 
+# Create Comment for Specific Post / Post ID Taken From URL
 class CommentCreateAPIView_ForSpecificPost(CreateAPIView, ListModelMixin):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentCreateSerializer_ForSpecificPost
@@ -119,6 +118,7 @@ class CommentCreateAPIView_ForSpecificPost(CreateAPIView, ListModelMixin):
         return serializer.save(created_by=self.request.user, post_id=post)
 
 
+# List of All Comments
 class CommentListAPIView(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentListSerializer
@@ -131,13 +131,24 @@ class CommentListAPIView(ListAPIView):
         return queryset
 
 
+# List of All Comments Ragarding Specific Post
+class CommentListAPIView_ForSpecificPost(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentListSerializer
+
+    def get_queryset(self):
+        post = self.kwargs['pk']
+        queryset = Comment.objects.filter(post_id=post)
+        return queryset
+
+# Delete API View
 class CommentDeleteAPIView(DestroyAPIView):
     queryset = Comment.objects.all()
     lookup_field = "pk"
     serializer_class = CommentDeleteUpdateSerializer
     permission_classes = [IsAuthenticated, IsOwner]
 
-
+# Update API View
 class CommentUpdateAPIView(UpdateAPIView, RetrieveAPIView):
     queryset = Comment.objects.all()
     lookup_field = "pk"

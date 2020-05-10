@@ -50,16 +50,25 @@ class CommentCreateSerializer_ForSpecificPost(serializers.ModelSerializer):
             "content"
         ]
 
-
+# To Get Username Ilo User ID on Comment List Serializer
 class CommunityUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CommunityUser
         fields = [
+            "id",
             "username"
         ]
 
+# To Get Post Details Ilo Post ID on Comment List Serializer
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ("id", "name", "description")
+
+
 class CommentListSerializer(serializers.ModelSerializer):
     created_by = CommunityUserSerializer()
+    post = PostSerializer()
     class Meta:
         model = Comment
         fields = "__all__"

@@ -23,6 +23,8 @@ urlpatterns = [
     path('comment/create/<pk>/', CommentCreateAPIView_ForSpecificPost.as_view(), name="comment-create-post"),
 
     path('comment/list/', CommentListAPIView.as_view(), name="comment-list"),
+    path('comment/list/<pk>/', CommentListAPIView_ForSpecificPost.as_view(), name="comment-list"),
+
     path('comment/delete/<pk>/', CommentDeleteAPIView.as_view(), name="comment-delete"),
     path('comment/update/<pk>/', CommentUpdateAPIView.as_view(), name="comment-update"),
 
