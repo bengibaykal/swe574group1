@@ -120,7 +120,7 @@ WSGI_APPLICATION = 'cityapp.wsgi.application'
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.postgresql',
-         'NAME': 'swe574_db',
+         'NAME': 'swe574_activity',
          'USER': 'postgres',
          'PASSWORD': 'Seneevo1992',
          'HOST': 'localhost',
