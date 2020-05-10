@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stream</title>
+</head>
+<body>
+    {% load activity_tags %}
+    {% activity_stream 'user' user %}
+    {% for action in stream  %}
+        {% display_action action %} <br>
+    {% endfor %}
+
+</body>
+</html>

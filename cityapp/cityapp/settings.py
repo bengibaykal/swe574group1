@@ -46,9 +46,14 @@ INSTALLED_APPS = [
     'community_user',
     'rest_framework_swagger',
     'community',
+    'activity_streamv2',
     'corsheaders',
-    'django_extensions'
+    'django_extensions',
+    'django.contrib.sites',  # Actstream Integration
+    'actstream'  # Actstream App
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,22 +97,57 @@ WSGI_APPLICATION = 'cityapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'django-test',
-#         'USER': 'dodo',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'swe'
+#                '573',
+#        'USER': 'gurbuz',
+#        'PASSWORD': '',
+#        'HOST': 'localhost',
+#        'PORT': '5432',
+#    }
+# }
+
+DATABASES = {
+     'default': {
+         'ENGINE': 'django.db.backends.postgresql',
+         'NAME': 'swe574_activity',
+         'USER': 'postgres',
+         'PASSWORD': 'Seneevo1992',
+         'HOST': 'localhost',
+         'PORT': '5432',
+     }
+ }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'swe'
+#                '573',
+#        'USER': 'gurbuz',
+#        'PASSWORD': '',
+#        'HOST': 'localhost',
+#        'PORT': '5432',
+#    }
+#}
+
+# Activity Stream Settings
+ACTSTREAM_SETTINGS = {
+    'MANAGER': 'community.managers.MyActionManager',
+    'FETCH_RELATIONS': True,
+    'USE_PREFETCH': True,
+    'USE_JSONFIELD': False,
+    'GFK_FETCH_DEPTH': 1,
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
