@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from datetime import timezone
+
 from actstream import action
 from django.contrib.sites.models import Site
 from django.db.models.signals import post_save
@@ -143,16 +145,14 @@ class DataFileField(TimeStamped):
     def __str__(self):
         return smart_unicode(self.name)
 
-
 class Comment(TimeStamped):
-    comment_text = models.TextField(max_length=255)
-    created_by = models.ForeignKey(CommunityUser, related_name="comment_author", on_delete=models.CASCADE, blank=True,
-                                   null=True)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="related_post")
+    created_by = models.ForeignKey(CommunityUser, on_delete=models.CASCADE, related_name="comment_author",
+                                        null=True)
+    content = models.TextField(null=True)
 
     def __str__(self):
-        return smart_unicode("%-%".format(self.created_by.username, self.post.name))
-
+        return self.post.name + "-" + self.created_by.username
 
 # todo
 class Recommendation(models.Model):
