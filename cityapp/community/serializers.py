@@ -34,3 +34,4 @@ class CommunitySearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
         fields = ("id", "name", "tags")
+

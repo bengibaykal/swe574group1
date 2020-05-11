@@ -13,13 +13,16 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView, CreateAPIView
+from rest_framework.generics import GenericAPIView, CreateAPIView, RetrieveAPIView
 from django.db.models import Q
 from community_user.models import *
 from community_user.permissions import *
 from django.forms import modelform_factory
 from django.http import JsonResponse
 from community_user.serializers import *
+from community.serializers import CommunitySerializer
+from django.core import serializers
+
 
 
 # Create your views here.
@@ -289,3 +292,12 @@ class JoinCommunityTemplateView(APIView):
         community.joined_users.add(request.user)
         Subscription.objects.create(created_by=self.request.user, joined_community=community)
         return redirect("community:community-detail", community.id)
+
+
+class ListCommunitiesOfCityAPIView(RetrieveAPIView):
+
+    def get(self, request, city_id):
+        communities = Community.objects.filter(city_id=city_id)
+        serialized_qs = serializers.serialize('json', communities)
+
+        return Response({'communitiesOfCity': serialized_qs})

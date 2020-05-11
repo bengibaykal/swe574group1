@@ -19,6 +19,6 @@ urlpatterns = [
     path('posts-create/<int:community_id>', CreatePostTemplateView.as_view(), name="posts-create"),
     path('data-type-create/<int:community_id>', CreateDataTypeTemplateView.as_view(), name="data-type-create"),
     path('join-community/<int:joined_community>', JoinCommunityTemplateView.as_view(), name="join-community"),
-
+    path('communities-of-city/<int:city_id>', ListCommunitiesOfCityAPIView.as_view(), name= "communities-of-city")
 
 ]
