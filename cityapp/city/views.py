@@ -34,7 +34,8 @@ class ListCityAPIView(ListAPIView):
 
     def get(self, request):
         queryset = City.objects.all()
-        return Response({"cities": queryset})
+        my_communities = Community.objects.filter(joined_users=self.request.user)
+        return Response({"cities": queryset, "communities": my_communities})
 
 
 class ShowDetailedCityAPIView(RetrieveAPIView):
