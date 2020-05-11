@@ -64,7 +64,8 @@
             console.log("In");
             var name = $("#city_name").val();
             var country_name = $("#country_name").val();
-            var image = $("#imageName").val();
+            var image = $("#img-upload").attr("src");
+            console.log(image)
             var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
             $.ajaxSetup({
                 beforeSend: function (xhr, settings) {
@@ -76,7 +77,7 @@
             $.ajax({
                 method: "POST",
                 url: "{% url "city:create-city" %}",
-                data: {name, country_name, image},
+                data: {"name":name, "country_name":country_name, "image":image},
                 success: function (data) {
                     var cityName = data["name"];
                     console.log("CITY NAME " + cityName)

@@ -6,7 +6,7 @@ from rest_framework.generics import (ListAPIView,
                                      RetrieveAPIView,
                                      DestroyAPIView,
                                      UpdateAPIView,
-                                     CreateAPIView,)
+                                     CreateAPIView, )
 
 from city.models import City
 from community.models import Community
@@ -15,7 +15,16 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from django.http import JsonResponse
 from django.core import serializers
+import base64
+from django.core.files.base import ContentFile
 
+
+def base64_file(data, name=None):
+    _format, _img_str = data.split(';base64,')
+    _name, ext = _format.split('/')
+    if not name:
+        name = _name.split(":")[-1]
+    return ContentFile(base64.b64decode(_img_str), name='{}.{}'.format(name, ext))
 
 
 class ListCityAPIView(ListAPIView):
@@ -38,20 +47,23 @@ class ShowDetailedCityAPIView(RetrieveAPIView):
 
     def get(self, request, name):
         city = City.objects.get(name=name)
+        my_communities = Community.objects.filter(joined_users=self.request.user)
         communities = Community.objects.filter(city_id=city.id)
-        serialized_qs = serializers.serialize('json', communities)
 
-        return Response({'city': city, 'communitiesOfCity': serialized_qs})
+        return Response({'city': city, 'comms': communities, "communities": my_communities})
+
 
 class DeleteCityAPIView(DestroyAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     lookup_field = 'name'
 
+
 class UpdateCityAPIView(UpdateAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     lookup_field = 'name'
+
 
 class CreateCityAPIView(CreateAPIView):
     serializer_class = CitySerializer
@@ -59,20 +71,20 @@ class CreateCityAPIView(CreateAPIView):
     template_name = 'user/create_city.html'
 
     def get(self, request):
+        communities = Community.objects.filter(joined_users=self.request.user)
         queryset = City.objects.all()
-        return Response({"cities": queryset})
-
+        return Response({"cities": queryset, "communities": communities})
 
     def post(self, request):
         name = request.data["name"]
         country_name = request.data["country_name"]
         image = request.data["image"]
-        print("Name:" + name)
+        if not name:
+            return JsonResponse({"error": "City Name Can't be Empty"})
         try:
-            city = City.objects.create(name=name, country_name=country_name, image=image)
-        except:
-            return JsonResponse( {"error": "A community with the same name already exists"})
+            city = City.objects.create(name=name, country_name=country_name, image=base64_file(image))
+        except Exception as e:
+            print(e)
+            return JsonResponse({"error": "Error Creating the City"})
 
         return JsonResponse({"name": city.name})
-
-
