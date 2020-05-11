@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 from django.utils.encoding import smart_text as smart_unicode
 from community_user.models import CommunityUser
+from city.models import City
+
 from django.db import models
 from django.utils.timezone import now
 from django.forms import ModelForm, ModelChoiceField
@@ -49,6 +51,8 @@ class Community(TimeStamped):
     joined_users = models.ManyToManyField(CommunityUser)
     tags = models.ManyToManyField(Tag, related_name="community_tags")
     public_option = models.BooleanField(default=True)
+    city_id = models.ForeignKey(City, related_name="city_id", on_delete=models.CASCADE, blank=True, null=True)
+
 
     def __str__(self):
         return smart_unicode(self.name)
