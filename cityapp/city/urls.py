@@ -10,5 +10,4 @@ urlpatterns = [
     path('delete/<name>', DeleteCityAPIView.as_view(), name="delete-city"),
     path('update/<name>', UpdateCityAPIView.as_view(), name="update-city"),
     path('create/', CreateCityAPIView.as_view(), name="create-city"),
-
 ]

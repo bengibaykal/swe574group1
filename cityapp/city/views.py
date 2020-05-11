@@ -9,10 +9,12 @@ from rest_framework.generics import (ListAPIView,
                                      CreateAPIView,)
 
 from city.models import City
+from community.models import Community
 from city.serializers import CitySerializer
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from django.http import JsonResponse
+from django.core import serializers
 
 
 
@@ -36,7 +38,10 @@ class ShowDetailedCityAPIView(RetrieveAPIView):
 
     def get(self, request, name):
         city = City.objects.get(name=name)
-        return Response({'city': city})
+        communities = Community.objects.filter(city_id=city.id)
+        serialized_qs = serializers.serialize('json', communities)
+
+        return Response({'city': city, 'communitiesOfCity': serialized_qs})
 
 class DeleteCityAPIView(DestroyAPIView):
     queryset = City.objects.all()
