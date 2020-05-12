@@ -11,10 +11,11 @@ class City(models.Model):
     creation_date = models.DateTimeField()
     modification_date = models.DateTimeField()
 
+    # Displaying city's name
     def __str__(self):
         return self.name
 
-    #Creation Date ve Modification Date icin duzenleme
+    # Creation Date and Modification Date while creating and update
     def save(self, *args, **kwargs):
         if not self.id:
             self.creation_date = timezone.now()

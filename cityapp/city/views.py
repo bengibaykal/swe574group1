@@ -14,11 +14,11 @@ from city.serializers import CitySerializer
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from django.http import JsonResponse
-from django.core import serializers
 import base64
 from django.core.files.base import ContentFile
 
 
+#Format for Uploading an image
 def base64_file(data, name=None):
     _format, _img_str = data.split(';base64,')
     _name, ext = _format.split('/')
@@ -26,7 +26,7 @@ def base64_file(data, name=None):
         name = _name.split(":")[-1]
     return ContentFile(base64.b64decode(_img_str), name='{}.{}'.format(name, ext))
 
-
+# Listing all cities view
 class ListCityAPIView(ListAPIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'user/cities.html'
@@ -37,7 +37,7 @@ class ListCityAPIView(ListAPIView):
         my_communities = Community.objects.filter(joined_users=self.request.user)
         return Response({"cities": queryset, "communities": my_communities})
 
-
+# Displaying Specific City View
 class ShowDetailedCityAPIView(RetrieveAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
@@ -53,19 +53,19 @@ class ShowDetailedCityAPIView(RetrieveAPIView):
 
         return Response({'city': city, 'comms': communities, "communities": my_communities})
 
-
+# Deleting city view (view not compleated):TODO
 class DeleteCityAPIView(DestroyAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     lookup_field = 'name'
 
-
+# Updating city view (view page not compleated):TODO
 class UpdateCityAPIView(UpdateAPIView):
     queryset = City.objects.all()
     serializer_class = CitySerializer
     lookup_field = 'name'
 
-
+# Creating a new city view
 class CreateCityAPIView(CreateAPIView):
     serializer_class = CitySerializer
     renderer_classes = [TemplateHTMLRenderer]
