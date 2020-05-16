@@ -1,10 +1,14 @@
-from rest_framework.generics import CreateAPIView, GenericAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, \
+    RetrieveAPIView
+from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
 from community_user.permissions import IsUserCommunityBuilder
-from community.permissions import IsUserInCommunity
+from community.permissions import IsUserInCommunity, IsOwner
 from rest_framework.response import Response
 from community.serializers import *
 from django.db.models import Q
+
+from community.models import Comment
 
 
 class CreateCommunityAPIView(CreateAPIView):
@@ -81,4 +85,73 @@ class CreateDataType(CreateAPIView):
         instance = self.perform_create(serializer)
         instance_serializer = DataTypeSerializer(instance)
         return Response(instance_serializer.data)
+
+
+# Create Comment for Any Post
+class CommentCreateAPIView(CreateAPIView, ListModelMixin):
+    queryset = Comment.objects.order_by("-created")
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentCreateSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        return serializer.save(created_by = self.request.user)
+
+
+# Create Comment for Specific Post / Post ID Taken From URL
+class CommentCreateAPIView_ForSpecificPost(CreateAPIView, ListModelMixin):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentCreateSerializer_ForSpecificPost
+
+    def get_queryset(self):
+        post = self.kwargs['pk']
+        queryset = Comment.objects.filter(post_id=post)
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        post = self.kwargs['pk']
+        return serializer.save(created_by=self.request.user, post_id=post)
+
+
+# List of All Comments
+class CommentListAPIView(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentListSerializer
+
+    def get_queryset(self):
+        queryset = Comment.objects.order_by("-created")
+        query = self.request.GET.get("q")
+        if query:
+            queryset = queryset.filter(post=query)
+        return queryset
+
+
+# List of All Comments Ragarding Specific Post
+class CommentListAPIView_ForSpecificPost(ListAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = CommentListSerializer
+
+    def get_queryset(self):
+        post = self.kwargs['pk']
+        queryset = Comment.objects.filter(post_id=post)
+        return queryset
+
+# Delete API View
+class CommentDeleteAPIView(DestroyAPIView):
+    queryset = Comment.objects.all()
+    lookup_field = "pk"
+    serializer_class = CommentDeleteUpdateSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
+
+# Update API View
+class CommentUpdateAPIView(UpdateAPIView, RetrieveAPIView):
+    queryset = Comment.objects.all()
+    lookup_field = "pk"
+    serializer_class = CommentDeleteUpdateSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
 

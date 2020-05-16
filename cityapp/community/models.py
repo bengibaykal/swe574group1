@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from datetime import timezone
+
+from actstream import action
+from django.contrib.sites.models import Site
+from django.db.models.signals import post_save
 from django.utils.encoding import smart_text as smart_unicode
 from community_user.models import CommunityUser
 from city.models import City
@@ -57,6 +63,17 @@ class Community(TimeStamped):
     def __str__(self):
         return smart_unicode(self.name)
 
+# Creating Action Instances by Using Django Signals & Actstream Action
+def save_community(sender, instance, **kwargs):
+    action.send(instance.created_by, verb="Has Created A New Community - ", description="New Community",
+                action_object=instance)
+    # To do
+    # Target --> City / instance.city
+    # City target içi ise sadece link olmalı onu düzeltmeliyiz.
+
+
+post_save.connect(save_community, sender=Community)
+
 
 class CommunityForm(ModelForm):
     class Meta:
@@ -88,6 +105,16 @@ class PostTemplate(TimeStamped):
     created_by = models.ForeignKey(CommunityUser, related_name="template_author", on_delete=models.CASCADE, blank=True,
                                    null=True)
 
+    def __str__(self):
+        return str(self.name)
+
+# Creating Action Instances by Using Django Signals & Actstream Action
+def save_posttemplate(sender, instance, **kwargs):
+    action.send(instance.created_by, verb="Has Created A New Post Template - ", description="New Post Template",
+                action_object=instance, target=instance.community)
+
+
+post_save.connect(save_posttemplate, sender=PostTemplate)
 
 class Post(TimeStamped):
     name = models.CharField(max_length=55, blank=True, null=True)
@@ -99,13 +126,20 @@ class Post(TimeStamped):
     post_template = models.ForeignKey(PostTemplate, related_name="post_template", on_delete=models.CASCADE, blank=True,
                                       null=True)
     post_content = JSONField(null=True)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    latitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Lat
+    longitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Long
     audio_version = models.FileField(max_length=55, null=True)
 
     def __str__(self):
         return smart_unicode(self.name)
 
+# Creating Action Instances by Using Django Signals & Actstream Action
+def save_post(sender, instance, **kwargs):
+    action.send(instance.created_by, verb="Has Created A New Post - ", description="New Post",
+                action_object=instance, target=instance.community)
+
+
+post_save.connect(save_post, sender=Post)
 
 class DataFileField(TimeStamped):
     name = models.CharField(max_length=55)
@@ -115,16 +149,14 @@ class DataFileField(TimeStamped):
     def __str__(self):
         return smart_unicode(self.name)
 
-
 class Comment(TimeStamped):
-    comment_text = models.TextField(max_length=255)
-    created_by = models.ForeignKey(CommunityUser, related_name="comment_author", on_delete=models.CASCADE, blank=True,
-                                   null=True)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="related_post")
+    created_by = models.ForeignKey(CommunityUser, on_delete=models.CASCADE, related_name="comment_author",
+                                        null=True)
+    content = models.TextField(null=True)
 
     def __str__(self):
-        return smart_unicode("%-%".format(self.created_by.username, self.post.name))
-
+        return self.post.name + "-" + self.created_by.username
 
 # todo
 class Recommendation(models.Model):

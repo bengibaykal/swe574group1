@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from community.models import *
 from django.shortcuts import render
 from community.models import *
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth import logout
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.renderers import TemplateHTMLRenderer
@@ -24,8 +24,10 @@ from community.serializers import CommunitySerializer
 from django.core import serializers
 
 
-
 # Create your views here.
+from community_user.models import CommunityUser
+
+
 class IndexTemplateView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "index.html"
@@ -301,3 +303,31 @@ class ListCommunitiesOfCityAPIView(RetrieveAPIView):
         serialized_qs = serializers.serialize('json', communities)
 
         return Response({'communitiesOfCity': serialized_qs})
+
+
+# User Notification View with Simple Template
+USER_MODEL = get_user_model()
+
+
+def notification(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    return render(request, 'user/activity.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'action_list': actstream.models.user_stream(request.user),
+                      'communities': communities
+                  }
+                  )
+
+
+# Class for Joined Communities List
+class JoinedCommunitiesListTemplateView(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/joined_communities.html'
+
+    def get(self, request):
+        communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
+        queryset = Community.objects.filter(joined_users=self.request.user)
+        return Response({'comms': queryset, "user": request.user, "communities": communities})
