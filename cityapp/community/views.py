@@ -2,6 +2,9 @@
 from __future__ import unicode_literals
 from rest_framework import status
 from django.shortcuts import redirect
+import actstream
+from actstream import models
+from django.contrib.contenttypes.models import ContentType
 from community.models import *
 from django.shortcuts import render
 from community.models import *
