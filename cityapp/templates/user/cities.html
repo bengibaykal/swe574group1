@@ -1,0 +1,26 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+{% block wrapper %}
+    <!-- Masthead -->
+    <div class="col-md-10 col-lg-10 col-xl-10 mx-auto">
+        <table id="table_id" class="display" style="width: 100%;">
+            <tbody>
+            {% for city in cities %}
+                <tr>
+                <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="{{ city.image.url }}">
+                <div class="card-body">
+                    <h5 class="card-title"><a href="{% url "city:detail-city" city.name %}"> {{ city.name }}</a></h5>
+                    <p class="card-text">{{ city.country_name }}</p>
+                </div>
+            </div>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+</html>
