@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'api',
+    'city',
     'community_user',
     'rest_framework_swagger',
     'community',
