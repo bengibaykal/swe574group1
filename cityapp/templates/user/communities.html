@@ -13,6 +13,7 @@
                 <th>#Users</th>
                 <th>Created By</th>
                 <th>Join</th>
+                <th>City</th>
 
             </tr>
             </thead>
@@ -28,6 +29,7 @@
                     {% else %}
                     <td>Joined</td>
                 {% endif %}
+                    <td>{{ comm.city_id }}</td>
                 </tr>
             {% endfor %}
             </tbody>
