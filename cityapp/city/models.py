@@ -1,15 +1,19 @@
+from actstream import action
 from django.db import models
+from django.db.models.signals import post_save
 from django.utils import timezone
 # Create your models here.
+from community_user.models import CommunityUser
+
 
 class City(models.Model):
-    #builderID = models.ForeignKey(CommunityUser)
+    created_by = models.ForeignKey(CommunityUser, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=55, unique=True)
     country_name = models.CharField(max_length=55)
     geolocation = models.CharField(max_length=55)
     image = models.ImageField(upload_to='media/city')
-    creation_date = models.DateTimeField()
-    modification_date = models.DateTimeField()
+    creation_date = models.DateTimeField(editable=False)
+    modification_date = models.DateTimeField(editable=False)
 
     # Displaying city's name
     def __str__(self):
@@ -23,3 +27,8 @@ class City(models.Model):
         return super(City, self).save(*args, **kwargs)
 
 
+#def save_city(sender, instance, **kwargs):
+    # to do --> action send
+
+
+#post_save.connect(save_city, sender=City)
