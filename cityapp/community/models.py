@@ -104,6 +104,7 @@ class PostTemplate(TimeStamped):
     custom_template = JSONField(null=True)
     created_by = models.ForeignKey(CommunityUser, related_name="template_author", on_delete=models.CASCADE, blank=True,
                                    null=True)
+    likes = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.name)
