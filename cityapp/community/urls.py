@@ -23,6 +23,6 @@ urlpatterns = [
     path('stream/', notification, name='user_notification'),
     path('stream/json', feeds.UserJSONActivityFeed_V2.as_view(), name='actstream_feed_json'),
     path('joined-communites-list', JoinedCommunitiesListTemplateView.as_view(), name="joined-communities-list"),
-
+    path('flag-inappropriate', FlagPostAsInappropriate.as_view(), name="flag-post-inappropriate")
 
 ]
