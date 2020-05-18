@@ -7,7 +7,8 @@ from community_user.models import CommunityUser
 
 
 class City(models.Model):
-    created_by = models.ForeignKey(CommunityUser, on_delete=models.CASCADE, blank=True, null=True)
+    created_by = models.ForeignKey(CommunityUser, related_name="city_author", on_delete=models.CASCADE, blank=True,
+                                   null=True)
     name = models.CharField(max_length=55, unique=True)
     country_name = models.CharField(max_length=55)
     geolocation = models.CharField(max_length=55)
