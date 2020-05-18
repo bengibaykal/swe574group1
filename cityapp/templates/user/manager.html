@@ -322,6 +322,10 @@
                                                 </div>
                                                 <a class="dropdown-item"
                                                    href="{% url "community:post-detail" post.id %}">Go to Post</a>
+                                               <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="flag_as_inappropriate({{post.id}});">Flag as inappropriate</a>
+
                                                 <!-- Follow Post -->
                                                 <!-- todo if following, unfollow should be seen -->
                                                 <a class="dropdown-item"
@@ -470,6 +474,37 @@
 
 
 </script>
+
+<script>
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        var flag_as_inappropriate = function (post_id) {
+            console.log(post_id  + "post_id");
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "community:flag-post-inappropriate"%}",
+                data: {"post_id":post_id},
+                success: function (data) {
+                    var likes = data["likes"];
+                    console.log("Likes count " + likes)
+                },
+            })
+        };
+
+    </script>
 
 </body>
 
