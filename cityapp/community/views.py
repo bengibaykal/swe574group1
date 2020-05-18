@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from actstream.models import following, Follow
+from actstream.registry import check
 from rest_framework import status
 from django.shortcuts import redirect
 import actstream
@@ -25,6 +28,7 @@ from django.http import JsonResponse
 from community_user.serializers import *
 from community.serializers import CommunitySerializer
 from django.core import serializers
+from actstream.decorators import stream
 
 
 # Create your views here.
@@ -43,8 +47,10 @@ class IndexTemplateView(APIView):
             user_communities_ids = [comm.id for comm in user_communities]
             posts = Post.objects.filter(community_id__in=user_communities_ids).order_by('-created')[:30]
             communities = Community.objects.filter(joined_users=self.request.user)
+            following_objects = following(request.user)
             print(request.user)
-            return Response({"posts": posts, "communities": communities, "user": request.user},
+            return Response({"posts": posts, "communities": communities, "user": request.user,
+                             "following": following_objects},
                             status=status.HTTP_200_OK
                             )
         return Response(
@@ -334,3 +340,16 @@ class JoinedCommunitiesListTemplateView(APIView):
         communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
         queryset = Community.objects.filter(joined_users=self.request.user)
         return Response({'comms': queryset, "user": request.user, "communities": communities})
+
+
+# Returns the Following Objects
+class deneme(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/deneme.html'
+
+    def get(self, request):
+        communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
+        queryset = following(request.user)
+        status = Follow.objects.get()
+        return Response({'list': queryset, "user": request.user, "communities": communities})
