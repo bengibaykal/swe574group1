@@ -334,3 +334,15 @@ class JoinedCommunitiesListTemplateView(APIView):
         communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
         queryset = Community.objects.filter(joined_users=self.request.user)
         return Response({'comms': queryset, "user": request.user, "communities": communities})
+
+
+class FlagPostAsInappropriate(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        post = Post.objects.get(id=request.data["post_id"])
+        print("likes before: ", post.likes)
+        post.likes += 1
+        post.save()
+        print("likes after: ", post.likes)
+        return Response({'likes:': post.likes})
