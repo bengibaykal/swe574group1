@@ -83,7 +83,7 @@ class CreateCityAPIView(CreateAPIView):
         if not name:
             return JsonResponse({"error": "City Name Can't be Empty"})
         try:
-            city = City.objects.create(name=name, country_name=country_name, image=base64_file(image))
+            city = City.objects.create(name=name, country_name=country_name, image=base64_file(image), created_by=request.user)
         except Exception as e:
             print(e)
             return JsonResponse({"error": "Error Creating the City"})
