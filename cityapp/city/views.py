@@ -16,6 +16,8 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 import base64
 from django.core.files.base import ContentFile
+from django.core import serializers
+import json
 
 
 #Format for Uploading an image
@@ -89,3 +91,12 @@ class CreateCityAPIView(CreateAPIView):
             return JsonResponse({"error": "Error Creating the City"})
 
         return JsonResponse({"name": city.name})
+
+class ListAllCitiesAPIView(RetrieveAPIView):
+    serializer_class = CitySerializer
+
+    def get(self, request):
+        queryset = City.objects.all()
+        cities_serialized = serializers.serialize('json', queryset)
+        return JsonResponse({"cities": cities_serialized})
+
