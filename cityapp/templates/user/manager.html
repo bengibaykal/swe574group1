@@ -308,8 +308,10 @@
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Dropdown -->
                                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                        <h6 class="m-0 font-weight-bold text-primary">{{ post.name }} | <span
-                                                style="font-size: 11px;color: #0f0f0f" id="{{ post.id }}">Community:{{ post.community.name }} Flags: {{ post.flags }}</span>
+                                        <h6 class="m-0 font-weight-bold text-primary">{{ post.name }} |
+                                            <span style="font-size: 11px;color: #0f0f0f" id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
+                                             <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
+
                                         </h6>
                                         <div class="dropdown no-arrow">
                                             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
@@ -503,7 +505,6 @@
                 data: {"post_id":post_id},
                 success: function (data) {
                     var flags_count = data["flags_count"];
-                    document.getElementById(post_id).textContent="Community: " + community_name +  "Flags: " + flags_count;
                     window.location.reload();
                 },
             })
@@ -526,7 +527,6 @@
                 success: function (data) {
                     var flags_count = data["flags_count"];
                     console.log("Flags count " )
-                    document.getElementById(post_id).textContent="Community: " + community_name +  "Flags: " + flags_count;
                     window.location.reload();
                     },
             })
