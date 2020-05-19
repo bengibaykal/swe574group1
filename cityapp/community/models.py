@@ -130,6 +130,7 @@ class Post(TimeStamped):
     longitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Long
     audio_version = models.FileField(max_length=55, null=True)
     flags = models.IntegerField(default=0)
+    flaggedUsers = models.ManyToManyField(CommunityUser, related_name= 'flagged_users')
 
     def __str__(self):
         return smart_unicode(self.name)
