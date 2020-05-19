@@ -341,8 +341,7 @@ class FlagPostAsInappropriate(APIView):
 
     def post(self, request):
         post = Post.objects.get(id=request.data["post_id"])
-        print("likes before: ", post.likes)
-        post.likes += 1
+        post.flags += 1
         post.save()
-        print("likes after: ", post.likes)
-        return Response({'likes:': post.likes})
+        print(post.flags)
+        return Response({'flags_count': post.flags})
