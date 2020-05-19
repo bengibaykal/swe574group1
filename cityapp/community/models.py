@@ -104,7 +104,6 @@ class PostTemplate(TimeStamped):
     custom_template = JSONField(null=True)
     created_by = models.ForeignKey(CommunityUser, related_name="template_author", on_delete=models.CASCADE, blank=True,
                                    null=True)
-    likes = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.name)
@@ -130,6 +129,7 @@ class Post(TimeStamped):
     latitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Lat
     longitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Long
     audio_version = models.FileField(max_length=55, null=True)
+    flags = models.IntegerField(default=0)
 
     def __str__(self):
         return smart_unicode(self.name)
