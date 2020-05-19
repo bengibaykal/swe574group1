@@ -324,8 +324,13 @@
                                                    href="{% url "community:post-detail" post.id %}">Go to Post</a>
                                                <a class="dropdown-item"
                                                    href="#"
-                                                   onclick="flag_as_inappropriate({{post.id}}, '{{ post.community.name }}');">Flag as inappropriate</a>
-
+                                                  {% if user.is_authenticated %}
+                                                        {% if user not in post.flaggedUsers.all %}
+                                                            onclick="flag_as_inappropriate({{post.id}}, '{{ post.community.name }}', '{{ user.username }}');">Flag as Inappropriate</a>
+                                                        {% else %}
+                                                            onclick="flag_as_appropriate({{post.id}}, '{{ post.community.name }}', '{{ user.username }}');">Flag as Appropriate</a>
+                                                        {% endif %}
+                                                    {% endif %}
                                                 <!-- Follow Post -->
                                                 <!-- todo if following, unfollow should be seen -->
                                                 <a class="dropdown-item"
@@ -483,9 +488,7 @@
             return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
         }
 
-        var flag_as_inappropriate = function (post_id, community_name) {
-            console.log(post_id  + "post_id");
-            console.log(community_name  + "comm_name");
+        var flag_as_inappropriate = function (post_id, community_name, user_name) {
             var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
            $.ajaxSetup({
                 beforeSend: function (xhr, settings) {
@@ -499,12 +502,33 @@
                 url: "{% url "community:flag-post-inappropriate" %}",
                 data: {"post_id":post_id},
                 success: function (data) {
-                    console.log(data)
                     var flags_count = data["flags_count"];
-                    var user = data["user"]
-                    console.log("Flags count " + flags_count)
                     document.getElementById(post_id).textContent="Community: " + community_name +  "Flags: " + flags_count;
+                    window.location.reload();
                 },
+            })
+        };
+
+        var flag_as_appropriate = function (post_id, community_name, user_name) {
+
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "community:flag-post-appropriate" %}",
+                data: {"post_id":post_id},
+                success: function (data) {
+                    var flags_count = data["flags_count"];
+                    console.log("Flags count " )
+                    document.getElementById(post_id).textContent="Community: " + community_name +  "Flags: " + flags_count;
+                    window.location.reload();
+                    },
             })
         };
 
