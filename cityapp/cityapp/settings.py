@@ -24,7 +24,7 @@ SECRET_KEY = 'johttxun*uf#pejfv4+2^s#r-o!)mjll7_g!u+$u5v@bbjcd$('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '169.61.3.247', 'demiroglu.org', 'comm.demiroglu.org', '51.116.173.70']
+ALLOWED_HOSTS = ['127.0.0.1', '169.61.3.247', 'demiroglu.org', 'comm.demiroglu.org', '51.116.179.7']
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
