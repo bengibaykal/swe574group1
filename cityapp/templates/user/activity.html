@@ -22,18 +22,20 @@
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Recent Activities</h1>
+            <h1 class="h1 mb-0 text-gray-800">Recent Activities</h1>
+        </div>
+        <div class="d-sm-flex align-items-center">
+            <h1 class="h4 mb-0 text-gray-800">The People You Follow</h1>
+            <a  href="{% url "community:notification_user_all" %}" class="h9 mb-0 text-gray-800"><i>&nbsp; (See All) </i></a>
         </div>
         <div class="row">
-            {% load activity_tags %}
-            {% activity_stream 'user' user %}
-            {% for action in stream %}
+            {% for action in user_activities %}
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-info shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">{% display_action action %}</div>
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">{{ action }}</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
@@ -45,6 +47,64 @@
             {% endfor %}
         </div>
     </div>
+
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center">
+            <h1 class="h4 mb-0 text-gray-800">The Communities You Follow</h1>
+            <a  href="{% url "community:notification_community_all" %}" class="h9 mb-0 text-gray-800"><i>&nbsp; (See All) </i></a>
+        </div>
+        <div class="row">
+            {% for action in communitiy_activities %}
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">{{ action }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center">
+            <h1 class="h4 mb-0 text-gray-800">The Posts You Follow</h1>
+            <a  href="{% url "community:notification_post_all" %}" class="h9 mb-0 text-gray-800"><i>&nbsp; (See All) </i></a>
+        </div>
+        <div class="row">
+            {% for action in post_activities %}
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">{{ action }}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
 
 {% endblock %}
 
