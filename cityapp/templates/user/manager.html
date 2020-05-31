@@ -383,7 +383,9 @@
                                                    href="#"
                                                    onclick="unfollow_post({{ post.id }});">Unfollow Post</a>
                                                 {% endif %}
-
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="listenAudioVersionOfPost({{ post.id }});">Listen Post</a>
                                                 <!-- Follow User -->
                                                 {% if user.id != post.created_by.id %}
                                                     <div class="dropdown-header">Created By: {{ post.created_by.username }}</div>
@@ -413,7 +415,7 @@
                                         </div>
                                     </div>
                                     <!-- Card Body -->
-                                    <div class="card-body">
+                                    <div class="card-body" id ="description">
                                         {{ post.description }}
                                     </div>
                                 </div>
@@ -620,11 +622,24 @@
                 data: {"post_id":post_id},
                 success: function (data) {
                     var flags_count = data["flags_count"];
-                    console.log("Flags count " )
                     window.location.reload();
                     },
             })
         };
+
+        var listenAudioVersionOfPost= function (post_id){
+            var input = document.getElementById(post_id);
+            var CommunityName = input.innerHTML;
+            var msgCommunityName = new SpeechSynthesisUtterance(CommunityName);
+            window.speechSynthesis.speak(msgCommunityName);
+
+            var input2 = document.getElementById("description");
+            var Description = input2.innerHTML;
+            var postContext ="Description " +  Description;
+             var msgCommunityName = new SpeechSynthesisUtterance(postContext);
+            window.speechSynthesis.speak(msgCommunityName);
+
+        }
 
     </script>
 
