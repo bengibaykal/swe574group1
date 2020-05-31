@@ -597,3 +597,9 @@ class FlagPostAsAppropriate(APIView):
         post.save()
         return Response({'flags_count': post.flags, 'flagged': flagged})
 
+
+class GetAllUsersTemplateView(APIView):
+    def get(self, request):
+        queryset = CommunityUser.objects.all()
+        serialized_qs = serializers.serialize('json', queryset)
+        return Response({'users': serialized_qs})
