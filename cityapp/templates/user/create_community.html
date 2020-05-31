@@ -26,6 +26,10 @@
                     <input name="description" type="name" class="form-control form-control-user"
                            id="data_type_description"
                            aria-describedby="nameHelp" placeholder="Enter description">
+                    <br>
+                    <h5 class="mb-0 text-gray-800">Belongs to city</h5>
+                    <select id="locality-dropdown" name="locality"></select>
+                    <br>
                     <div style="margin: 20px 0 20px 0">
                         <h5 class="mb-0 text-gray-800">Tags</h5>
                         <select id="myTags" size="8" style="width: 100%;"></select>
@@ -48,8 +52,28 @@
             </div>
         </div>
     </div>
+
     <script>
 
+        //Filling dropdown by the names of cities
+        let dropdown = $('#locality-dropdown');
+        dropdown.empty();
+        dropdown.append('<option selected="true" disabled>Choose City of Community</option>');
+        dropdown.prop('selectedIndex', 0);
+        $.ajax({
+                method: "GET",
+                url: "{% url "city:all-cities" %}",
+                success: function (data) {
+                    var cities = data["cities"];
+                    var obj = JSON.parse(cities)
+                    var arrayLength = obj.length;
+                    for (var i = 0; i < arrayLength; i++) {
+                        var city = obj[i].fields.name
+                        dropdown.append($('<option></option>').attr('value', city).text(city));
+                    }
+                   console.log(obj);
+                },
+        });
 
         function csrfSafeMethod(method) {
             // these HTTP methods do not require CSRF protection
@@ -72,10 +96,12 @@
                     }
                 }
             });
-            $.ajax({
+            var selectedCity = document.getElementById("locality-dropdown").value
+            if(selectedCity != "Choose City of Community"){
+                $.ajax({
                 method: "POST",
                 url: "{% url "community:communities-create" %}",
-                data: {tag: tags, name, description},
+                data: {tag: tags, name, description, selectedCity},
                 success: function (data) {
                     var community_id = data["community_id"];
                     if(community_id) {
@@ -86,6 +112,10 @@
                     }
                 },
             })
+            }
+            else{
+                alert("City Selection is required field, please select the city of community")
+            }
         };
 
         $('#community_name').on('keyup', function () {
