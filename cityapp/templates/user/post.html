@@ -19,12 +19,16 @@
 {% block wrapper %}
     <!-- Begin Page Content -->
     <div class="container-fluid">
+    <td><a href="{% url "api:comment-list-specific" post.id%}"></a></td>
+    <td><a href="{% url "api:comment-create-post" post.id %}"></a></td>
 
+        {% csrf_token %}
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">{{ post.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800" id="postName">{{ post.name }}</h1>
+            <span onclick="listenAudioVersion({{ post.id }})"><i class="fas fa-volume-up"></i>Listen Audio</span>
         </div>
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4" id ="allTags">
             {% for tag in post.tags.all %}
                 <a href="#">#{{ tag.name }}</a>
             {% endfor %}
@@ -73,16 +77,27 @@
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">{{ key }}</h6>
+                                <h6 class="m-0 font-weight-bold text-primary" id = {{ key }}>{{ key }}</h6>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body" >
+                                {{ value }}
+                            </div>
+
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                        <div class="card shadow mb-4">
+                            <!-- Card Header - Dropdown -->
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Comments </h6>
                             </div>
                             <!-- Card Body -->
                             <div class="card-body">
-                                {{ value }}
+                                <div id="makeComment"></div>
+                                <ul class="list-group list-group-flush" id = "comments"> </ul>
                             </div>
                         </div>
-
-                    {% endif %}
-                {% endfor %}
             </div>
         </div>
     </div>
@@ -103,6 +118,115 @@
     </script>
     <script async defer
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDX0K8j8RSzk2VyXi3Eks1cy-muY2FmD50&callback=initMap">
+    </script>
+
+    <script>
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "GET",
+                url: "{% url 'api:comment-list-specific' post.id %}",
+                success: function (data) {
+                    var comments = data["comments"];
+                    //console.log(comments);
+                    var commentsJSON = JSON.parse(comments);
+                    var commentsLength = Object.keys(commentsJSON).length;
+                    var ul = document.getElementById("comments");
+
+                    $.ajax({
+                            method: "GET",
+                            url: "{% url 'community:get-all-users' %}",
+                            success: function (data) {
+                                var allUsers = JSON.parse(data["users"])
+                                var usersLength = Object.keys(allUsers).length;
+
+                    for (var i = 0; i < commentsLength; i++){
+                        //console.log('D:' + commentsJSON[i].fields.created_by)
+                        var username="Undefined";
+                        for(var d=0; d<usersLength; d++){
+                            //console.log(allUsers[d].fields.username + " - " + allUsers[d].pk)
+                            //console.log("Esitlik: " + commentsJSON[i].fields.created_by + " = " +allUsers[d].pk )
+                            if(commentsJSON[i].fields.created_by==allUsers[d].pk){
+                                //console.log("SONUC: " + commentsJSON[i].fields.created_by + " = " +allUsers[d].pk )
+                                username = allUsers[d].fields.username
+                            }
+                        }
+                        var li = document.createElement("li");
+                        li.setAttribute("class", "list-group-item")
+                        li.appendChild(document.createTextNode(username.toUpperCase()+":  " + commentsJSON[i].fields.content));
+                        ul.appendChild(li);
+                    }
+                         }
+                        });
+                },
+            })
+
+
+
+    </script>
+    <script>
+        var textArea = document.createElement("textarea");
+        textArea.setAttribute("id", "commentMessage")
+        var button = document.createElement("button");
+        button.setAttribute("id", "submitButton")
+        button.innerHTML = "Make a comment";                   // Insert text
+        button.style.marginBottom="5px";
+        button.style.marginTop="5px";
+        textArea.name = "post";
+        textArea.maxLength = "30";
+        textArea.cols = "50";
+        textArea.rows = "2";
+        var commentDiv = document.getElementById("makeComment");
+        commentDiv.appendChild(textArea);
+        commentDiv.appendChild(button);
+        button.onclick = function(){
+            var commentContent = document.getElementById("commentMessage").value;
+             $.ajax({
+                method: "POST",
+                url: "{% url 'api:comment-create-post' post.id %}",
+                 data: {"commentContent":commentContent },
+                success: function (data) {
+                    window.location.reload();
+                }
+             })
+        };
+    </script>
+    <script>
+    var listenAudioVersion= function (post_id) {
+        console.log(post_id)
+        var inputPostName = document.getElementById("postName");
+        var PostName = inputPostName.innerHTML;
+        var msgPostName = new SpeechSynthesisUtterance(PostName);
+        window.speechSynthesis.speak(msgPostName);
+
+        var length = document.getElementsByClassName("card-body").length;
+        for (var a = 0; a < length; a++) {
+            var inputTags = document.getElementsByClassName("card-body")[a];
+            var Name = document.getElementsByClassName("m-0 font-weight-bold text-primary")[a].innerHTML;
+            var Tags = inputTags.innerHTML;
+            var tagContext = Name +" "+ Tags;
+            console.log(tagContext)
+            tagContext = tagContext.split("#").join("");
+            if(tagContext.indexOf("</div>")==-1) {
+                var msgTags = new SpeechSynthesisUtterance(tagContext);
+                window.speechSynthesis.speak(msgTags);
+            }
+        }
+
+        }
     </script>
 {% endblock %}
 

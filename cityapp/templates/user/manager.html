@@ -41,7 +41,7 @@
 </head>
 
 <body id="page-top">
-
+{% load activity_tags %}
 <!-- Page Wrapper -->
 <div id="wrapper">
 
@@ -53,7 +53,7 @@
             <div class="sidebar-brand-icon rotate-n-15">
                 <i class="fas fa-users"></i>
             </div>
-            <div class="sidebar-brand-text mx-3">Comm <sup></sup></div>
+            <div class="sidebar-brand-text mx-3">City App! <sup></sup></div>
         </a>
 
         <!-- Divider -->
@@ -66,7 +66,7 @@
                 <span>Latest Posts</span></a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url "community:user_notification" %}">
+            <a class="nav-link" href="{% url "community:notification_combined" %}">
                 <i class="fas fa-bell"></i>
                 <span>Notifications</span></a>
         </li>
@@ -82,7 +82,7 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Community
+            City
         </div>
 
         <li class="nav-item">
@@ -99,7 +99,13 @@
         </li>
 
 
+        <!-- Divider -->
+        <hr class="sidebar-divider">
 
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Community
+        </div>
 
 
         <!-- Nav Item - Pages Collapse Menu -->
@@ -133,6 +139,7 @@
                 <span>Create Community</span></a>
         </li>
 
+
         <li class="nav-item">
             <a class="nav-link" >
                 <i class="fas fa-fw fa-plus"></i>
@@ -149,12 +156,36 @@
 
 
 
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Following / Followers
+        </div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "community:followings_combined" %}">
+                <i class="fas fa-arrow-alt-circle-right"></i>
+                <span>Following</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "community:followers" %}">
+                <i class="fas fa-arrow-alt-circle-right"></i>
+                <span>Followers</span></a>
+        </li>
+
+
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
 
     </ul>
+
+
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
@@ -321,7 +352,15 @@
                         <div class="col-lg-12 mb-12" style="display: none" id="follow-success">
                             <div class="card bg-success text-white shadow">
                                 <div class="card-body">
-                                    User Followed Successfully
+                                    Successfully Followed
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+                        <div class="col-lg-12 mb-12" style="display: none" id="unfollow-success">
+                            <div class="card bg-success text-white shadow">
+                                <div class="card-body">
+                                    Successfully Unfollowed
                                 </div>
                             </div>
                         </div>
@@ -330,12 +369,14 @@
                         </br>
                         {% for post in posts %}
                             <div class="col-lg-6">
-
+                                {% csrf_token %}
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Dropdown -->
                                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                        <h6 class="m-0 font-weight-bold text-primary">{{ post.name }} | <span
-                                                style="font-size: 11px;color: #0f0f0f">Community:{{ post.community.name }}</span>
+                                        <h6 class="m-0 font-weight-bold text-primary">{{ post.name }} |
+                                            <span style="font-size: 11px;color: #0f0f0f" id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
+                                             <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
+
                                         </h6>
                                         <div class="dropdown no-arrow">
                                             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
@@ -348,28 +389,60 @@
                                                 </div>
                                                 <a class="dropdown-item"
                                                    href="{% url "community:post-detail" post.id %}">Go to Post</a>
-                                                {#                                                <a class="dropdown-item" href="#">Another action</a>#}
-                                                {#                                                <div class="dropdown-divider"></div>#}
-                                                {#                                                <a class="dropdown-item" href="#">Something else here</a>#}
+
+                                               <a class="dropdown-item"
+                                                   href="#"
+                                                  {% if user.is_authenticated %}
+                                                        {% if user not in post.flaggedUsers.all %}
+                                                            onclick="flag_as_inappropriate({{post.id}}, '{{ post.community.name }}', '{{ user.username }}');">Flag as Inappropriate</a>
+                                                        {% else %}
+                                                            onclick="flag_as_appropriate({{post.id}}, '{{ post.community.name }}', '{{ user.username }}');">Flag as Appropriate</a>
+                                                        {% endif %}
+                                                    {% endif %}
+
+                                                <!-- Follow Post -->
+                                                {% if post not in following %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="follow_post({{ post.id }});">Follow Post</a>
+                                                {% else %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="unfollow_post({{ post.id }});">Unfollow Post</a>
+                                                {% endif %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="listenAudioVersionOfPost({{ post.id }});">Listen Post</a>
+                                                <!-- Follow User -->
                                                 {% if user.id != post.created_by.id %}
-                                                    <div class="dropdown-header">Created By:</div>
-                                                    <a class="dropdown-item"
-                                                       href="#">{{ post.created_by.username }}</a>
-                                                    <a class="dropdown-item"
-                                                       href="#">{{ post.created }}</a>
-                                                    <div class="dropdown-header">Follow</div>
-                                                    {% if user.id != post.created_by.id %}
+                                                    <div class="dropdown-header">Created By: {{ post.created_by.username }}</div>
+                                                    {% if post.created_by not in following %}
                                                         <a class="dropdown-item"
                                                            href="#"
-                                                           onclick="follow({{ post.created_by.id }});">Follow {{ post.created_by.username }}</a>
+                                                           onclick="follow({{ post.created_by.id }});">Follow User</a>
+                                                    {% else %}
+                                                        <a class="dropdown-item"
+                                                           href="#"
+                                                           onclick="unfollow({{ post.created_by.id }});">Unfollow User</a>
                                                     {% endif %}
                                                 {% endif %}
 
+                                                <!-- Follow Community -->
+                                                <div class="dropdown-header">Community: {{ post.community.name }}</div>
+                                                {% if post.community not in following %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="follow_community({{ post.community.id }});">Follow Community</a>
+                                                {% else %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="unfollow_community({{ post.community.id }});">Unfollow Community</a>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                     <!-- Card Body -->
-                                    <div class="card-body">
+                                    <div class="card-body" id ="{{ post.id }}description">
                                         {{ post.description }}
                                     </div>
                                 </div>
@@ -449,16 +522,45 @@
     var follow = function (user_id) {
         $.ajax({
             method: "GET",
-            url: "/activity/follow/7/" + user_id,
+            url: "/activity/follow/{{ ctype_user.pk }}/" + user_id,
             success: function (data) {
                 $("#BigButton").clone().appendTo("#rightDiv");
                 $("#follow-success").show();
-                $("#follow-success").fadeOut(2000);
+                $("#follow-success").fadeOut(1800);
                 console.log("success");
             },
         });
         return false;
     };
+
+    var unfollow = function (user_id) {
+        $.ajax({
+            method: "GET",
+            url: "/activity/unfollow/{{ ctype_user.pk }}/" + user_id,
+            success: function (data) {
+                $("#BigButton").clone().appendTo("#rightDiv");
+                $("#unfollow-success").show();
+                $("#unfollow-success").fadeOut(1800);
+                console.log("success");
+            },
+        });
+        return false;
+    };
+
+    var follow_community = function (community_id) {
+        $.ajax({
+            method: "GET",
+            url: "/activity/follow_all/{{ ctype_community.pk }}/" + community_id,
+            success: function (data) {
+                $("#BigButton").clone().appendTo("#rightDiv");
+                $("#follow-success").show();
+                $("#follow-success").fadeOut(1800);
+                console.log("success");
+            },
+        });
+        return false;
+    };
+
 
     document.addEventListener("selectionchange", function() {
         var selection = window.getSelection();
@@ -633,7 +735,116 @@
               txt = "You pressed Cancel!";
             }
         };
+
+
+    var unfollow_community = function (community_id) {
+        $.ajax({
+            method: "GET",
+            url: "/activity/unfollow_all/{{ ctype_community.pk }}/" + community_id,
+            success: function (data) {
+                $("#BigButton").clone().appendTo("#rightDiv");
+                $("#unfollow-success").show();
+                $("#unfollow-success").fadeOut(1800);
+                console.log("success");
+            },
+        });
+        return false;
+    };
+
+    var follow_post = function (post_id) {
+        $.ajax({
+            method: "GET",
+            url: "/activity/follow_all/{{ ctype_post.pk }}/" + post_id,
+            success: function (data) {
+                $("#BigButton").clone().appendTo("#rightDiv");
+                $("#follow-success").show();
+                $("#follow-success").fadeOut(1800);
+                console.log("success");
+            },
+        });
+        return false;
+    };
+
+    var unfollow_post = function (post_id) {
+        $.ajax({
+            method: "GET",
+            url: "/activity/unfollow_all/{{ ctype_post.pk }}/" + post_id,
+            success: function (data) {
+                $("#BigButton").clone().appendTo("#rightDiv");
+                $("#unfollow-success").show();
+                $("#unfollow-success").fadeOut(1800);
+                console.log("success");
+            },
+        });
+        return false;
+    };
+
 </script>
+
+<script>
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        var flag_as_inappropriate = function (post_id, community_name, user_name) {
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "community:flag-post-inappropriate" %}",
+                data: {"post_id":post_id},
+                success: function (data) {
+                    var flags_count = data["flags_count"];
+                    window.location.reload();
+                },
+            })
+        };
+
+        var flag_as_appropriate = function (post_id, community_name, user_name) {
+
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "community:flag-post-appropriate" %}",
+                data: {"post_id":post_id},
+                success: function (data) {
+                    var flags_count = data["flags_count"];
+                    window.location.reload();
+                    },
+            })
+        };
+
+        var listenAudioVersionOfPost= function (post_id){
+            var input = document.getElementById(post_id);
+            var CommunityName = input.innerHTML;
+            var msgCommunityName = new SpeechSynthesisUtterance(CommunityName);
+            window.speechSynthesis.speak(msgCommunityName);
+
+            var input2 = document.getElementById(post_id+ "description");
+            var Description = input2.innerHTML;
+            var postContext ="Description " +  Description;
+             var msgCommunityName = new SpeechSynthesisUtterance(postContext);
+            window.speechSynthesis.speak(msgCommunityName);
+
+        }
+
+    </script>
 
 
 </body>

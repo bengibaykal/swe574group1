@@ -66,10 +66,7 @@ class Community(TimeStamped):
 # Creating Action Instances by Using Django Signals & Actstream Action
 def save_community(sender, instance, **kwargs):
     action.send(instance.created_by, verb="Has Created A New Community - ", description="New Community",
-                action_object=instance)
-    # To do
-    # Target --> City / instance.city
-    # City target içi ise sadece link olmalı onu düzeltmeliyiz.
+                action_object=instance, target=instance.city_id)
 
 
 post_save.connect(save_community, sender=Community)
@@ -129,6 +126,8 @@ class Post(TimeStamped):
     latitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Lat
     longitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Long
     audio_version = models.FileField(max_length=55, null=True)
+    flags = models.IntegerField(default=0, null=True, blank=True,)
+    flaggedUsers = models.ManyToManyField(CommunityUser, related_name= 'flagged_users')
 
     def __str__(self):
         return smart_unicode(self.name)
@@ -156,7 +155,15 @@ class Comment(TimeStamped):
     content = models.TextField(null=True)
 
     def __str__(self):
-        return self.post.name + "-" + self.created_by.username
+        return self.post.name
+
+# Creating Action Instances by Using Django Signals & Actstream Action
+def save_comment(sender, instance, **kwargs):
+    action.send(instance.created_by, verb="Has Created A New Comment To", description="New Comment",
+                target=instance.post)
+
+
+post_save.connect(save_comment, sender=Comment)
 
 # todo
 class Recommendation(models.Model):

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from actstream.actions import is_following
+from actstream.models import following, Follow, Action, followers
+from actstream.registry import check
 from rest_framework import status
 from django.shortcuts import redirect
 import actstream
@@ -23,14 +27,16 @@ from community_user.permissions import *
 from django.forms import modelform_factory
 from django.http import JsonResponse
 from community_user.serializers import *
-from community.serializers import CommunitySerializer
+from community.serializers import PostSerializer
 from django.core import serializers
+from actstream.decorators import stream
+
 
 
 # Create your views here.
 from community_user.models import CommunityUser
 
-
+USER_MODEL = get_user_model()
 class IndexTemplateView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "index.html"
@@ -43,8 +49,14 @@ class IndexTemplateView(APIView):
             user_communities_ids = [comm.id for comm in user_communities]
             posts = Post.objects.filter(community_id__in=user_communities_ids).order_by('-created')[:30]
             communities = Community.objects.filter(joined_users=self.request.user)
+            following_objects = following(request.user)
+            ctype_community = ContentType.objects.get_for_model(Community)
+            ctype_post = ContentType.objects.get_for_model(Post)
+            ctype_user = ContentType.objects.get_for_model(USER_MODEL)
             print(request.user)
-            return Response({"posts": posts, "communities": communities, "user": request.user},
+            return Response({"posts": posts, "communities": communities, "user": request.user,
+                             "following": following_objects, "ctype_community": ctype_community,
+                             "ctype_post": ctype_post, "ctype_user": ctype_user},
                             status=status.HTTP_200_OK
                             )
         return Response(
@@ -161,8 +173,12 @@ class CreateCommunityTemplateView(APIView):
     def post(self, request):
         name = request.data["name"]
         description = request.data["description"]
+        city = request.data["selectedCity"]
+        city_ToSend = City.objects.get(name=city)
+
         try:
-            community = Community.objects.create(name=name, description=description, created_by=request.user)
+            community = Community.objects.create(name=name, description=description, created_by=request.user,
+                                                 city_id=city_ToSend)
             community.joined_users.add(request.user)
             Subscription.objects.create(created_by=self.request.user, joined_community=community)
         except:
@@ -308,22 +324,6 @@ class ListCommunitiesOfCityAPIView(RetrieveAPIView):
         return Response({'communitiesOfCity': serialized_qs})
 
 
-# User Notification View with Simple Template
-USER_MODEL = get_user_model()
-
-
-def notification(request):
-    communities = Community.objects.filter(joined_users=request.user)
-    return render(request, 'user/activity.html',
-                  context={
-                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
-                      'actor': request.user,
-                      'action_list': actstream.models.user_stream(request.user),
-                      'communities': communities
-                  }
-                  )
-
-
 # Class for Joined Communities List
 class JoinedCommunitiesListTemplateView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -334,3 +334,284 @@ class JoinedCommunitiesListTemplateView(APIView):
         communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
         queryset = Community.objects.filter(joined_users=self.request.user)
         return Response({'comms': queryset, "user": request.user, "communities": communities})
+
+
+# User Notification View with Simple Template
+USER_MODEL = get_user_model()
+
+
+def notification(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_communities = following(request.user, Community)
+    following_posts = following(request.user, Post)
+    following_users = following(request.user, CommunityUser)
+
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+
+    print(following_communities)
+    print(following_posts)
+    print(following_users)
+
+    id_users = []
+    for i in following_users:
+        id_users.append(i.id)
+
+    id_communities = []
+    for i in following_communities:
+        id_communities.append(i.id)
+
+    id_posts = []
+    for i in following_posts:
+        id_posts.append(i.id)
+
+    # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
+    user_activities = Action.objects.filter(actor_object_id__in=id_users).order_by("-timestamp")[:8]
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
+
+    return render(request, 'user/activity.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'user_activities': user_activities,
+                      'communitiy_activities': model_community_activities,
+                      'post_activities': model_post_activities,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def notification_user(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_users = following(request.user, CommunityUser)
+
+    print(following_users)
+
+    id_users = []
+    for i in following_users:
+        id_users.append(i.id)
+
+    # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
+    user_activities = Action.objects.filter(actor_object_id__in=id_users).order_by("-timestamp")[:50]
+
+    return render(request, 'user/activity_user.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'user_activities': user_activities,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def notification_community(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_communities = following(request.user, Community)
+
+    print(following_communities)
+
+    ctype_community = ContentType.objects.get_for_model(Community)
+
+    id_communities = []
+    for i in following_communities:
+        id_communities.append(i.id)
+
+    # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
+
+
+    return render(request, 'user/activity_community.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'communitiy_activities': model_community_activities,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def notification_post(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_posts = following(request.user, Post)
+
+    print(following_posts)
+
+    ctype_post = ContentType.objects.get_for_model(Post)
+
+    id_posts = []
+    for i in following_posts:
+        id_posts.append(i.id)
+
+    # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
+
+    return render(request, 'user/activity_post.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'post_activities': model_post_activities,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+def followings(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_communities = following(request.user, Community)[:8]
+    following_posts = following(request.user, Post)[:8]
+    following_users = following(request.user, CommunityUser)[:8]
+
+    print(following_communities)
+    print(following_posts)
+    print(following_users)
+
+
+    return render(request, 'user/followings.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'following_users': following_users,
+                      'following_communities': following_communities,
+                      'following_posts': following_posts,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def followings_user(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_users = following(request.user, CommunityUser)[:50]
+
+    print(following_users)
+
+
+    return render(request, 'user/followings_user.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'following_users': following_users,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def followings_community(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_communities = following(request.user, Community)[:50]
+
+    print(following_communities)
+
+
+    return render(request, 'user/followings_community.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'following_communities': following_communities,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def followings_post(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_posts = following(request.user, Post)[:50]
+
+    print(following_posts)
+
+
+
+    return render(request, 'user/followings_post.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'following_posts': following_posts,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+def followers(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+    user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(content_type=ctype_user).values_list("user_id")[:50]
+    followers_usernames = CommunityUser.objects.filter(id__in=user_followers_ids)
+
+    print(user_followers_ids)
+    print(followers_usernames)
+
+    return render(request, 'user/followers.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'followers': followers_usernames,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+class FlagPostAsInappropriate(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PostSerializer
+
+    def post(self, request):
+        flagged = True;
+        post = Post.objects.get(id=request.data["post_id"])
+        post.flags += 1
+        print(request.user)
+        post.flaggedUsers.add(request.user)
+        print(post)
+        post.save()
+        return Response({'flags_count': post.flags, 'flagged': flagged})
+
+class FlagPostAsAppropriate(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PostSerializer
+
+    def post(self, request):
+        print("Inside the Appropriate")
+        flagged = False;
+        post = Post.objects.get(id=request.data["post_id"])
+        post.flags -= 1
+        post.flaggedUsers.remove(request.user)
+        post.save()
+        return Response({'flags_count': post.flags, 'flagged': flagged})
+
+
+class GetAllUsersTemplateView(APIView):
+    def get(self, request):
+        queryset = CommunityUser.objects.all()
+        serialized_qs = serializers.serialize('json', queryset)
+        return Response({'users': serialized_qs})

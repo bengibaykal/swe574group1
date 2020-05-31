@@ -63,7 +63,7 @@ class CommunityUserSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ("id", "name", "description")
+        fields = ("id", "name", "description", "flaggedUsers")
 
 
 class CommentListSerializer(serializers.ModelSerializer):
