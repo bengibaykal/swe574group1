@@ -304,12 +304,14 @@
                         </br>
                         {% for post in posts %}
                             <div class="col-lg-6">
-
+                                {% csrf_token %}
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Dropdown -->
                                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                        <h6 class="m-0 font-weight-bold text-primary">{{ post.name }} | <span
-                                                style="font-size: 11px;color: #0f0f0f">Community:{{ post.community.name }}</span>
+                                        <h6 class="m-0 font-weight-bold text-primary">{{ post.name }} |
+                                            <span style="font-size: 11px;color: #0f0f0f" id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
+                                             <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
+
                                         </h6>
                                         <div class="dropdown no-arrow">
                                             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
@@ -322,6 +324,15 @@
                                                 </div>
                                                 <a class="dropdown-item"
                                                    href="{% url "community:post-detail" post.id %}">Go to Post</a>
+                                               <a class="dropdown-item"
+                                                   href="#"
+                                                  {% if user.is_authenticated %}
+                                                        {% if user not in post.flaggedUsers.all %}
+                                                            onclick="flag_as_inappropriate({{post.id}}, '{{ post.community.name }}', '{{ user.username }}');">Flag as Inappropriate</a>
+                                                        {% else %}
+                                                            onclick="flag_as_appropriate({{post.id}}, '{{ post.community.name }}', '{{ user.username }}');">Flag as Appropriate</a>
+                                                        {% endif %}
+                                                    {% endif %}
                                                 <!-- Follow Post -->
                                                 <!-- todo if following, unfollow should be seen -->
                                                 <a class="dropdown-item"
@@ -470,6 +481,58 @@
 
 
 </script>
+
+<script>
+
+
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        var flag_as_inappropriate = function (post_id, community_name, user_name) {
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "community:flag-post-inappropriate" %}",
+                data: {"post_id":post_id},
+                success: function (data) {
+                    var flags_count = data["flags_count"];
+                    window.location.reload();
+                },
+            })
+        };
+
+        var flag_as_appropriate = function (post_id, community_name, user_name) {
+
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+           $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            $.ajax({
+                method: "POST",
+                url: "{% url "community:flag-post-appropriate" %}",
+                data: {"post_id":post_id},
+                success: function (data) {
+                    var flags_count = data["flags_count"];
+                    console.log("Flags count " )
+                    window.location.reload();
+                    },
+            })
+        };
+
+    </script>
 
 </body>
 

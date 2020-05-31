@@ -24,5 +24,7 @@ urlpatterns = [
     path('stream/json', feeds.UserJSONActivityFeed_V2.as_view(), name='actstream_feed_json'),
     path('joined-communites-list', JoinedCommunitiesListTemplateView.as_view(), name="joined-communities-list"),
     path('get-all-users', GetAllUsersTemplateView.as_view(), name="get-all-users"),
+    path('flag-inappropriate', FlagPostAsInappropriate.as_view(), name="flag-post-inappropriate"),
+    path('flag-appropriate', FlagPostAsAppropriate.as_view(), name="flag-post-appropriate")
 
 ]
