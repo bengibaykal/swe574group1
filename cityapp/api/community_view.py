@@ -9,6 +9,7 @@ from community.serializers import *
 from django.db.models import Q
 
 from community.models import Comment
+from django.core import serializers
 
 
 class CreateCommunityAPIView(CreateAPIView):
@@ -104,7 +105,6 @@ class CommentCreateAPIView(CreateAPIView, ListModelMixin):
 class CommentCreateAPIView_ForSpecificPost(CreateAPIView, ListModelMixin):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentCreateSerializer_ForSpecificPost
-
     def get_queryset(self):
         post = self.kwargs['pk']
         queryset = Comment.objects.filter(post_id=post)
@@ -114,8 +114,9 @@ class CommentCreateAPIView_ForSpecificPost(CreateAPIView, ListModelMixin):
         return self.list(request, *args, **kwargs)
 
     def perform_create(self, serializer):
+        commentContent = self.request.data["commentContent"]
         post = self.kwargs['pk']
-        return serializer.save(created_by=self.request.user, post_id=post)
+        return serializer.save(created_by=self.request.user, post_id=post, content=commentContent)
 
 
 # List of All Comments
@@ -135,11 +136,13 @@ class CommentListAPIView(ListAPIView):
 class CommentListAPIView_ForSpecificPost(ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentListSerializer
+    queryset = Post.objects.all()
+    lookup_field = 'post_id'
 
-    def get_queryset(self):
-        post = self.kwargs['pk']
-        queryset = Comment.objects.filter(post_id=post)
-        return queryset
+    def get(self, request, post_id):
+        queryset = Comment.objects.filter(post_id=post_id)
+        serialized_qs = serializers.serialize('json', queryset)
+        return Response({'comments': serialized_qs})
 
 # Delete API View
 class CommentDeleteAPIView(DestroyAPIView):
