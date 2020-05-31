@@ -124,12 +124,6 @@ class UserCommunitiesListTemplateView(APIView):
         queryset = Community.objects.all()
         return Response({'comms': queryset, "user": request.user, "communities": communities})
 
-class UserNameFromIDTemplateView(APIView):
-    print("response")
-    def get(self, request):
-        users = CommunityUser.objects.all()
-        serialized_qs = serializers.serialize('json', users)
-        return Response({'users': serialized_qs})
 
 
 # todo Refactor
