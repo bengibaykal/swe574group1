@@ -162,8 +162,12 @@ class CreateCommunityTemplateView(APIView):
     def post(self, request):
         name = request.data["name"]
         description = request.data["description"]
+        city = request.data["selectedCity"]
+        city_ToSend = City.objects.get(name=city)
+
         try:
-            community = Community.objects.create(name=name, description=description, created_by=request.user)
+            community = Community.objects.create(name=name, description=description, created_by=request.user,
+                                                 city_id=city_ToSend)
             community.joined_users.add(request.user)
             Subscription.objects.create(created_by=self.request.user, joined_community=community)
         except:
