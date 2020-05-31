@@ -23,8 +23,9 @@ from community_user.permissions import *
 from django.forms import modelform_factory
 from django.http import JsonResponse
 from community_user.serializers import *
-from community.serializers import CommunitySerializer
+from community.serializers import PostSerializer
 from django.core import serializers
+
 
 
 # Create your views here.
@@ -338,3 +339,31 @@ class JoinedCommunitiesListTemplateView(APIView):
         communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
         queryset = Community.objects.filter(joined_users=self.request.user)
         return Response({'comms': queryset, "user": request.user, "communities": communities})
+
+
+class FlagPostAsInappropriate(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PostSerializer
+
+    def post(self, request):
+        flagged = True;
+        post = Post.objects.get(id=request.data["post_id"])
+        post.flags += 1
+        print(request.user)
+        post.flaggedUsers.add(request.user)
+        print(post)
+        post.save()
+        return Response({'flags_count': post.flags, 'flagged': flagged})
+
+class FlagPostAsAppropriate(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = PostSerializer
+
+    def post(self, request):
+        print("Inside the Appropriate")
+        flagged = False;
+        post = Post.objects.get(id=request.data["post_id"])
+        post.flags -= 1
+        post.flaggedUsers.remove(request.user)
+        post.save()
+        return Response({'flags_count': post.flags, 'flagged': flagged})
