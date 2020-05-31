@@ -26,5 +26,7 @@ urlpatterns = [
     path('stream/user/', notification_user, name='notification_user_all'),
     path('stream/community/', notification_community, name='notification_community_all'),
     path('stream/post', notification_post, name='notification_post_all'),
+    path('flag-inappropriate', FlagPostAsInappropriate.as_view(), name="flag-post-inappropriate"),
+    path('flag-appropriate', FlagPostAsAppropriate.as_view(), name="flag-post-appropriate")
 
 ]
