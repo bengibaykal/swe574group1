@@ -1,0 +1,54 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+{% block head_css %}
+    <style>
+        .h-100 {
+            height: auto !important;
+        }
+
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+        }
+    </style>
+{% endblock %}
+
+
+{% block wrapper %}
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h1 mb-0 text-gray-800">Recent Activities</h1>
+        </div>
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h4 mb-0 text-gray-800">The People You Follow - All Activities</h1>
+        </div>
+        <div class="row">
+            {% load activity_tags %}
+            {% for action in user_activities %}
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">{% display_action action %}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
+
+
+</html>
