@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from annotations.models import Annotation
-from jsonschema import validate
+
 
 
 

@@ -15,20 +15,19 @@ class Annotation(models.Model):
     #name = models.CharField(max_length=120)
     annotation = JSONField(blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-
-        if not self.annotation['@context'] == "http://www.w3.org/ns/anno.jsonld":
-            print("not valid")
-            raise django.core.exceptions.ValidationError('Invalid schema.')
-            return False
-        if  self.annotation['body'] == "":
-            raise django.core.exceptions.ValidationError('Invalid schema.')
-            return False
-        if  self.annotation['target'] == "":
-            raise django.core.exceptions.ValidationError('Invalid schema.')
-            return False
-        else:
-            return super(Annotation, self).save(*args, **kwargs)
+    #def save(self, *args, **kwargs):
+        #if not self.annotation['@context'] == "http://www.w3.org/ns/anno.jsonld":
+        #    print("not valid")
+        #    raise django.core.exceptions.ValidationError('Invalid schema.')
+        #    return False
+        #elif  self.annotation['body'] == "":
+        #    raise django.core.exceptions.ValidationError('Invalid schema.')
+        #    return False
+        #elif  self.annotation['target'] == "":
+        #    raise django.core.exceptions.ValidationError('Invalid schema.')
+        #    return False
+        #else:
+        #    return super(Annotation, self).save(*args, **kwargs)
 
 
     #created = models.DateTimeField(editable=False)
