@@ -20,9 +20,12 @@ urlpatterns = [
     path('posts-create/<int:community_id>', CreatePostTemplateView.as_view(), name="posts-create"),
     path('data-type-create/<int:community_id>', CreateDataTypeTemplateView.as_view(), name="data-type-create"),
     path('join-community/<int:joined_community>', JoinCommunityTemplateView.as_view(), name="join-community"),
-    path('stream/', notification, name='user_notification'),
-    path('stream/json', feeds.UserJSONActivityFeed_V2.as_view(), name='actstream_feed_json'),
     path('joined-communites-list', JoinedCommunitiesListTemplateView.as_view(), name="joined-communities-list"),
+    path('stream/json', feeds.UserJSONActivityFeed_V2.as_view(), name='actstream_feed_json'),
+    path('stream/', notification, name='notification_combined'),
+    path('stream/user/', notification_user, name='notification_user_all'),
+    path('stream/community/', notification_community, name='notification_community_all'),
+    path('stream/post', notification_post, name='notification_post_all'),
     path('flag-inappropriate', FlagPostAsInappropriate.as_view(), name="flag-post-inappropriate"),
     path('flag-appropriate', FlagPostAsAppropriate.as_view(), name="flag-post-appropriate")
 
