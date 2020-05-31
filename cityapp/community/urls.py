@@ -12,6 +12,7 @@ urlpatterns = [
     path('login', login_view, name="login"),
     path('logout', logout_view, name="logout"),
     path('manager', CommunityLoginTemplateView.as_view(), name="manager"),
+    path('dashboard', CommunityDashboardTemplateView.as_view(), name="dashboard"),
     path('communites-list', UserCommunitiesListTemplateView.as_view(), name="communities-list-user"),
     path('communities/<int:community_id>', CommunitiesDetailedTemplateView.as_view(), name="community-detail"),
     path('posts/<int:post_id>', PostsDetailedTemplateView.as_view(), name="post-detail"),
