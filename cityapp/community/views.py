@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from actstream.actions import is_following
-from actstream.models import following, Follow, Action
+from actstream.models import following, Follow, Action, followers
 from actstream.registry import check
 from rest_framework import status
 from django.shortcuts import redirect
@@ -460,10 +460,114 @@ def notification_post(request):
                   }
                   )
 
-    def get(self, request):
-        communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
-        queryset = Community.objects.filter(joined_users=self.request.user)
-        return Response({'comms': queryset, "user": request.user, "communities": communities})
+def followings(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_communities = following(request.user, Community)[:8]
+    following_posts = following(request.user, Post)[:8]
+    following_users = following(request.user, CommunityUser)[:8]
+
+    print(following_communities)
+    print(following_posts)
+    print(following_users)
+
+
+    return render(request, 'user/followings.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'following_users': following_users,
+                      'following_communities': following_communities,
+                      'following_posts': following_posts,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def followings_user(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_users = following(request.user, CommunityUser)[:50]
+
+    print(following_users)
+
+
+    return render(request, 'user/followings_user.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'following_users': following_users,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def followings_community(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_communities = following(request.user, Community)[:50]
+
+    print(following_communities)
+
+
+    return render(request, 'user/followings_community.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'following_communities': following_communities,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def followings_post(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_posts = following(request.user, Post)[:50]
+
+    print(following_posts)
+
+
+
+    return render(request, 'user/followings_post.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'following_posts': following_posts,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+def followers(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(content_type=7).values_list("user_id")[:50]
+    followers_usernames = CommunityUser.objects.filter(id__in=user_followers_ids)
+
+    print(user_followers_ids)
+    print(followers_usernames)
+
+    return render(request, 'user/followers.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'followers': followers_usernames,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
 
 
 class FlagPostAsInappropriate(APIView):

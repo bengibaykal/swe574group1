@@ -26,6 +26,11 @@ urlpatterns = [
     path('stream/user/', notification_user, name='notification_user_all'),
     path('stream/community/', notification_community, name='notification_community_all'),
     path('stream/post', notification_post, name='notification_post_all'),
+    path('followings/', followings, name='followings_combined'),
+    path('followings/user/', followings_user, name='followings_user_all'),
+    path('followings/community/', followings_community, name='followings_community_all'),
+    path('followings/post/', followings_post, name='followings_post_all'),
+    path('followers/', followers, name='followers'),
     path('flag-inappropriate', FlagPostAsInappropriate.as_view(), name="flag-post-inappropriate"),
     path('flag-appropriate', FlagPostAsAppropriate.as_view(), name="flag-post-appropriate")
 
