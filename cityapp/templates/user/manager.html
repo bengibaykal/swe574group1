@@ -47,7 +47,7 @@
             <div class="sidebar-brand-icon rotate-n-15">
                 <i class="fas fa-users"></i>
             </div>
-            <div class="sidebar-brand-text mx-3">Comm <sup></sup></div>
+            <div class="sidebar-brand-text mx-3">City App! <sup></sup></div>
         </a>
 
         <!-- Divider -->
@@ -76,7 +76,7 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Community
+            City
         </div>
 
         <li class="nav-item">
@@ -91,6 +91,14 @@
                 <i class="fas fa-fw fa-plus"></i>
                 <span>Create City</span></a>
         </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Community
+        </div>
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
@@ -123,12 +131,34 @@
                 <span>Create Community</span></a>
         </li>
 
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Following / Followers
+        </div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "community:followings_combined" %}">
+                <i class="fas fa-arrow-alt-circle-right"></i>
+                <span>Following</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "community:followers" %}">
+                <i class="fas fa-arrow-alt-circle-right"></i>
+                <span>Followers</span></a>
+        </li>
+
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline">
             <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
 
     </ul>
+
+
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
