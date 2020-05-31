@@ -124,6 +124,13 @@ class UserCommunitiesListTemplateView(APIView):
         queryset = Community.objects.all()
         return Response({'comms': queryset, "user": request.user, "communities": communities})
 
+class UserNameFromIDTemplateView(APIView):
+    print("response")
+    def get(self, request):
+        users = CommunityUser.objects.all()
+        serialized_qs = serializers.serialize('json', users)
+        return Response({'users': serialized_qs})
+
 
 # todo Refactor
 class CommunitiesDetailedTemplateView(APIView):
@@ -334,3 +341,10 @@ class JoinedCommunitiesListTemplateView(APIView):
         communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
         queryset = Community.objects.filter(joined_users=self.request.user)
         return Response({'comms': queryset, "user": request.user, "communities": communities})
+
+
+class GetAllUsersTemplateView(APIView):
+    def get(self, request):
+        queryset = CommunityUser.objects.all()
+        serialized_qs = serializers.serialize('json', queryset)
+        return Response({'users': serialized_qs})
