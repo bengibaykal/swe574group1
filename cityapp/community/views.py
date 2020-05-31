@@ -36,7 +36,7 @@ from actstream.decorators import stream
 # Create your views here.
 from community_user.models import CommunityUser
 
-
+USER_MODEL = get_user_model()
 class IndexTemplateView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "index.html"
@@ -50,9 +50,13 @@ class IndexTemplateView(APIView):
             posts = Post.objects.filter(community_id__in=user_communities_ids).order_by('-created')[:30]
             communities = Community.objects.filter(joined_users=self.request.user)
             following_objects = following(request.user)
+            ctype_community = ContentType.objects.get_for_model(Community)
+            ctype_post = ContentType.objects.get_for_model(Post)
+            ctype_user = ContentType.objects.get_for_model(USER_MODEL)
             print(request.user)
             return Response({"posts": posts, "communities": communities, "user": request.user,
-                             "following": following_objects},
+                             "following": following_objects, "ctype_community": ctype_community,
+                             "ctype_post": ctype_post, "ctype_user": ctype_user},
                             status=status.HTTP_200_OK
                             )
         return Response(
@@ -345,6 +349,9 @@ def notification(request):
     following_posts = following(request.user, Post)
     following_users = following(request.user, CommunityUser)
 
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+
     print(following_communities)
     print(following_posts)
     print(following_users)
@@ -363,8 +370,8 @@ def notification(request):
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
     user_activities = Action.objects.filter(actor_object_id__in=id_users).order_by("-timestamp")[:8]
-    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=9).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
-    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=10).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
 
     return render(request, 'user/activity.html',
                   context={
@@ -415,12 +422,14 @@ def notification_community(request):
 
     print(following_communities)
 
+    ctype_community = ContentType.objects.get_for_model(Community)
+
     id_communities = []
     for i in following_communities:
         id_communities.append(i.id)
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=9).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
 
 
     return render(request, 'user/activity_community.html',
@@ -443,12 +452,14 @@ def notification_post(request):
 
     print(following_posts)
 
+    ctype_post = ContentType.objects.get_for_model(Post)
+
     id_posts = []
     for i in following_posts:
         id_posts.append(i.id)
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=10).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
 
     return render(request, 'user/activity_post.html',
                   context={
@@ -554,7 +565,8 @@ def followers(request):
     communities = Community.objects.filter(joined_users=request.user)
     posts = Post.objects.filter(created_by=request.user)
 
-    user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(content_type=7).values_list("user_id")[:50]
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+    user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(content_type=ctype_user).values_list("user_id")[:50]
     followers_usernames = CommunityUser.objects.filter(id__in=user_followers_ids)
 
     print(user_followers_ids)

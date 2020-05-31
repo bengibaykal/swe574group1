@@ -493,7 +493,7 @@
     var follow = function (user_id) {
         $.ajax({
             method: "GET",
-            url: "/activity/follow/7/" + user_id,
+            url: "/activity/follow/{{ ctype_user.pk }}/" + user_id,
             success: function (data) {
                 $("#BigButton").clone().appendTo("#rightDiv");
                 $("#follow-success").show();
@@ -507,7 +507,7 @@
     var unfollow = function (user_id) {
         $.ajax({
             method: "GET",
-            url: "/activity/unfollow/7/" + user_id,
+            url: "/activity/unfollow/{{ ctype_user.pk }}/" + user_id,
             success: function (data) {
                 $("#BigButton").clone().appendTo("#rightDiv");
                 $("#unfollow-success").show();
@@ -521,7 +521,7 @@
     var follow_community = function (community_id) {
         $.ajax({
             method: "GET",
-            url: "/activity/follow_all/9/" + community_id,
+            url: "/activity/follow_all/{{ ctype_community.pk }}/" + community_id,
             success: function (data) {
                 $("#BigButton").clone().appendTo("#rightDiv");
                 $("#follow-success").show();
@@ -535,7 +535,7 @@
     var unfollow_community = function (community_id) {
         $.ajax({
             method: "GET",
-            url: "/activity/unfollow_all/9/" + community_id,
+            url: "/activity/unfollow_all/{{ ctype_community.pk }}/" + community_id,
             success: function (data) {
                 $("#BigButton").clone().appendTo("#rightDiv");
                 $("#unfollow-success").show();
@@ -549,7 +549,7 @@
     var follow_post = function (post_id) {
         $.ajax({
             method: "GET",
-            url: "/activity/follow_all/10/" + post_id,
+            url: "/activity/follow_all/{{ ctype_post.pk }}/" + post_id,
             success: function (data) {
                 $("#BigButton").clone().appendTo("#rightDiv");
                 $("#follow-success").show();
@@ -563,7 +563,7 @@
     var unfollow_post = function (post_id) {
         $.ajax({
             method: "GET",
-            url: "/activity/unfollow_all/10/" + post_id,
+            url: "/activity/unfollow_all/{{ ctype_post.pk }}/" + post_id,
             success: function (data) {
                 $("#BigButton").clone().appendTo("#rightDiv");
                 $("#unfollow-success").show();
