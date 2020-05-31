@@ -415,7 +415,7 @@
                                         </div>
                                     </div>
                                     <!-- Card Body -->
-                                    <div class="card-body" id ="description">
+                                    <div class="card-body" id ="{{ post.id }}description">
                                         {{ post.description }}
                                     </div>
                                 </div>
@@ -633,7 +633,7 @@
             var msgCommunityName = new SpeechSynthesisUtterance(CommunityName);
             window.speechSynthesis.speak(msgCommunityName);
 
-            var input2 = document.getElementById("description");
+            var input2 = document.getElementById(post_id+ "description");
             var Description = input2.innerHTML;
             var postContext ="Description " +  Description;
              var msgCommunityName = new SpeechSynthesisUtterance(postContext);
