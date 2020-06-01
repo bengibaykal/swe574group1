@@ -14,4 +14,5 @@ urlpatterns = [
                   path('api/', include(api_urls)),
                   path('city/', include('city.urls')),
                   path('activity/', include('actstream.urls')),  # Activity Stream URL
+                  path('api/annotations/', include('annotations.api.urls')),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
