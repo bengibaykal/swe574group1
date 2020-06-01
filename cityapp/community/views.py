@@ -663,3 +663,15 @@ class CommunityDashboardTemplateView(APIView):
             user.set_password(new_password)
             user.save()
             return JsonResponse({"success": "Passwords changed successfully"}, status=200)
+
+
+class UserCreatedPostsTemplateView(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/user_created_posts.html'
+
+    def get(self, request, user_id):
+        posts = Post.objects.filter(created_by__id=user_id)
+        communities = Community.objects.filter(joined_users=self.request.user)
+        user_page = CommunityUser.objects.filter(id=user_id).first()
+        return Response({'posts': posts, "user": request.user, "communities": communities, "user_page": user_page})
