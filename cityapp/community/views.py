@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from django.db.models import Count
 from actstream.models import following, Follow, Action
 from community.models import *
 from community.models import *
@@ -29,6 +29,8 @@ from rest_framework.views import APIView
 from datetime import datetime
 
 USER_MODEL = get_user_model()
+
+
 class IndexTemplateView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "index.html"
@@ -362,9 +364,10 @@ def notification(request):
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
     user_activities = Action.objects.filter(actor_object_id__in=id_users).order_by("-timestamp")[:8]
-    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
-    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
-
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(
+        target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(
+        target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
 
     return render(request, 'user/activity.html',
                   context={
@@ -423,9 +426,8 @@ def notification_community(request):
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
 
-    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
-
-
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(
+        target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
 
     return render(request, 'user/activity_community.html',
                   context={
@@ -455,8 +457,8 @@ def notification_post(request):
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
 
-    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
-
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(
+        target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
 
     return render(request, 'user/activity_post.html',
                   context={
@@ -560,7 +562,8 @@ def followers(request):
     posts = Post.objects.filter(created_by=request.user)
 
     ctype_user = ContentType.objects.get_for_model(USER_MODEL)
-    user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(content_type=ctype_user).values_list("user_id")[:50]
+    user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(content_type=ctype_user).values_list(
+        "user_id")[:50]
 
     followers_usernames = CommunityUser.objects.filter(id__in=user_followers_ids)
 
@@ -620,7 +623,43 @@ class CommunityDashboardTemplateView(APIView):
 
     def get(self, request):
         communities = Community.objects.filter(joined_users=self.request.user)
-        posts = Post.objects.filter(community__in=communities, created__startswith=datetime.now().date())
-        count = posts.count()
+        posts = Post.objects.filter(created_by=request.user)
+        created_post_count = posts.count()
+
+        ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+        user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(
+            content_type=ctype_user).values_list("user_id")
+
+        follower_count = user_followers_ids.count()
+
+        following_users = following(request.user, CommunityUser)
+        id_users = []
+        for i in following_users:
+            id_users.append(i.id)
+        following_users_count = len(id_users)
+
+        popular_communities = Community.objects.annotate(number_of_posts=Count('post'))[:5]
+        for i in range(0, len(popular_communities)):
+            print(popular_communities[i].name)
+
         return Response(
-            {"user": request.user, "communities": communities, "count": count})
+            {"user": request.user, "communities": communities, "created_post_count": created_post_count,
+             "follower_count": follower_count, "following_users_count": following_users_count,
+             "popular_communities": popular_communities})
+
+    def post(self, request):
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        re_new_password = request.POST.get("re_new_password")
+
+        user = request.user
+        success = user.check_password(old_password)
+
+        if not success:
+            return JsonResponse({"error": "False Old Password"}, status=403)
+        elif re_new_password != new_password:
+            return JsonResponse({"error": "Passwords not matching"}, status=403)
+        else:
+            user.set_password(new_password)
+            user.save()
+            return JsonResponse({"success": "Passwords changed successfully"}, status=200)
