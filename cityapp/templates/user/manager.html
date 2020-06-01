@@ -34,10 +34,10 @@
             src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
 
     <link href="http://edge1y.tapmodo.com/deepliq/global.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="http://jcrop-cdn.tapmodo.com/v0.9.12/css/jquery.Jcrop.min.css" type="text/css">
-<link href="http://edge1u.tapmodo.com/deepliq/jcrop_demos.css" rel="stylesheet" type="text/css">
-<script src="http://jcrop-cdn.tapmodo.com/v0.9.12/js/jquery.Jcrop.min.js"></script>
-<script src="http://edge1v.tapmodo.com/deepliq/jcrop_demos.js"></script>
+    <link rel="stylesheet" href="http://jcrop-cdn.tapmodo.com/v0.9.12/css/jquery.Jcrop.min.css" type="text/css">
+    <link href="http://edge1u.tapmodo.com/deepliq/jcrop_demos.css" rel="stylesheet" type="text/css">
+    <script src="http://jcrop-cdn.tapmodo.com/v0.9.12/js/jquery.Jcrop.min.js"></script>
+    <script src="http://edge1v.tapmodo.com/deepliq/jcrop_demos.js"></script>
     {% block head_css %}
     {% endblock %}
 </head>
@@ -62,16 +62,17 @@
         <hr class="sidebar-divider my-0">
 
         <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "community:dashboard" %}">
+                <i class="fas fa-user-circle"></i>
+                <span>Dashboard - Profile</span></a>
+        </li>
         <li class="nav-item active">
             <a class="nav-link" href="/">
                 <i class="fas fa-fw fa-newspaper"></i>
                 <span>Latest Posts</span></a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{% url "community:dashboard" %}">
-                <i class="fas fa-bell"></i>
-                <span>Dashboard - Profile</span></a>
-        </li>
+
         <li class="nav-item">
             <a class="nav-link" href="{% url "community:notification_combined" %}">
                 <i class="fas fa-bell"></i>
@@ -148,20 +149,20 @@
 
 
         <li class="nav-item">
-            <a class="nav-link" >
+            <a class="nav-link">
                 <i class="fas fa-fw fa-plus"></i>
-                <input type="button" onclick="myFunction()" value="Check Annotation" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <input type="button" onclick="myFunction()" value="Check Annotation"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" >
+            <a class="nav-link">
                 <i class="fas fa-fw fa-plus"></i>
-                <input type="button" onclick="myFunction2()" value="Create Annotation" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                <input type="button" onclick="myFunction2()" value="Create Annotation"
+                       class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
             </a>
         </li>
-
-
 
 
         <!-- Divider -->
@@ -327,10 +328,10 @@
                             {#                                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>#}
                             {#                                Profile#}
                             {#                            </a>#}
-                            {#                            <a class="dropdown-item" href="#">#}
-                            {#                                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>#}
-                            {#                                Settings#}
-                            {#                            </a>#}
+                            <a class="dropdown-item" href="{% url "community:dashboard" %}">
+                                <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Profile
+                            </a>
                             {#                            <a class="dropdown-item" href="#">#}
                             {#                                <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>#}
                             {#                                Activity Log#}
@@ -351,18 +352,18 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Latest Posts</h1>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-12 mb-12" style="display: none" id="follow-success">
-                            <div class="card bg-success text-white shadow">
-                                <div class="card-body">
-                                    Successfully Followed
-                                </div>
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Latest Posts</h1>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 mb-12" style="display: none" id="follow-success">
+                        <div class="card bg-success text-white shadow">
+                            <div class="card-body">
+                                Successfully Followed
                             </div>
                         </div>
+                    </div>
                     <div class="row">
                         <div class="col-lg-12 mb-12" style="display: none" id="unfollow-success">
                             <div class="card bg-success text-white shadow">
@@ -381,8 +382,9 @@
                                     <!-- Card Header - Dropdown -->
                                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                         <h6 class="m-0 font-weight-bold text-primary">{{ post.name }} |
-                                            <span style="font-size: 11px;color: #0f0f0f" id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
-                                             <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
+                                            <span style="font-size: 11px;color: #0f0f0f"
+                                                  id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
+                                            <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
 
                                         </h6>
                                         <div class="dropdown no-arrow">
@@ -397,32 +399,36 @@
                                                 <a class="dropdown-item"
                                                    href="{% url "community:post-detail" post.id %}">Go to Post</a>
 
-                                               <a class="dropdown-item"
+                                                <a class="dropdown-item"
                                                    href="#"
-                                                  {% if user.is_authenticated %}
-                                                        {% if user not in post.flaggedUsers.all %}
-                                                            onclick="flag_as_inappropriate({{post.id}}, '{{ post.community.name }}', '{{ user.username }}');">Flag as Inappropriate</a>
-                                                        {% else %}
-                                                            onclick="flag_as_appropriate({{post.id}}, '{{ post.community.name }}', '{{ user.username }}');">Flag as Appropriate</a>
+                                                        {% if user.is_authenticated %}
+                                                            {% if user not in post.flaggedUsers.all %}
+                                                   onclick="flag_as_inappropriate({{ post.id }}, '{{ post.community.name }}', '{{ user.username }}');"
+                                                                >Flag as Inappropriate</a>
+                                                            {% else %}
+                                                                onclick="flag_as_appropriate({{ post.id }}, '
+                                                                {{ post.community.name }}', '{{ user.username }}
+                                                                ');">Flag as Appropriate</a>
+                                                            {% endif %}
                                                         {% endif %}
-                                                    {% endif %}
 
                                                 <!-- Follow Post -->
                                                 {% if post not in following %}
-                                                <a class="dropdown-item"
-                                                   href="#"
-                                                   onclick="follow_post({{ post.id }});">Follow Post</a>
+                                                    <a class="dropdown-item"
+                                                       href="#"
+                                                       onclick="follow_post({{ post.id }});">Follow Post</a>
                                                 {% else %}
-                                                <a class="dropdown-item"
-                                                   href="#"
-                                                   onclick="unfollow_post({{ post.id }});">Unfollow Post</a>
+                                                    <a class="dropdown-item"
+                                                       href="#"
+                                                       onclick="unfollow_post({{ post.id }});">Unfollow Post</a>
                                                 {% endif %}
                                                 <a class="dropdown-item"
                                                    href="#"
                                                    onclick="listenAudioVersionOfPost({{ post.id }});">Listen Post</a>
                                                 <!-- Follow User -->
                                                 {% if user.id != post.created_by.id %}
-                                                    <div class="dropdown-header">Created By: {{ post.created_by.username }}</div>
+                                                    <div class="dropdown-header">Created
+                                                        By: {{ post.created_by.username }}</div>
                                                     {% if post.created_by not in following %}
                                                         <a class="dropdown-item"
                                                            href="#"
@@ -430,26 +436,29 @@
                                                     {% else %}
                                                         <a class="dropdown-item"
                                                            href="#"
-                                                           onclick="unfollow({{ post.created_by.id }});">Unfollow User</a>
+                                                           onclick="unfollow({{ post.created_by.id }});">Unfollow
+                                                            User</a>
                                                     {% endif %}
                                                 {% endif %}
 
                                                 <!-- Follow Community -->
                                                 <div class="dropdown-header">Community: {{ post.community.name }}</div>
                                                 {% if post.community not in following %}
-                                                <a class="dropdown-item"
-                                                   href="#"
-                                                   onclick="follow_community({{ post.community.id }});">Follow Community</a>
+                                                    <a class="dropdown-item"
+                                                       href="#"
+                                                       onclick="follow_community({{ post.community.id }});">Follow
+                                                        Community</a>
                                                 {% else %}
-                                                <a class="dropdown-item"
-                                                   href="#"
-                                                   onclick="unfollow_community({{ post.community.id }});">Unfollow Community</a>
+                                                    <a class="dropdown-item"
+                                                       href="#"
+                                                       onclick="unfollow_community({{ post.community.id }});">Unfollow
+                                                        Community</a>
                                                 {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                     <!-- Card Body -->
-                                    <div class="card-body" id ="{{ post.id }}description">
+                                    <div class="card-body" id="{{ post.id }}description">
                                         {{ post.description }}
                                     </div>
                                 </div>
@@ -462,147 +471,147 @@
             {% endblock %}
             <!-- /.container-fluid -->
 
-        </div>
-        <!-- End of Main Content -->
+            </div>
+            <!-- End of Main Content -->
 
-        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-            <div class="container my-auto">
-                <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Comm 2019</span>
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Comm 2019</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="{% url "community:logout" %}">Logout</a>
                 </div>
             </div>
-        </footer>
-        <!-- End of Footer -->
-
-    </div>
-    <!-- End of Content Wrapper -->
-
-</div>
-<!-- End of Page Wrapper -->
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                <a class="btn btn-primary" href="{% url "community:logout" %}">Logout</a>
-            </div>
         </div>
     </div>
-</div>
 
-<!-- Bootstrap core JavaScript-->
-<script src="{% static "vendor/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static "vendor/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
 
-<!-- Core plugin JavaScript-->
-<script src="{% static "vendor/jquery-easing/jquery.easing.min.js" %}"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="{% static "vendor/jquery-easing/jquery.easing.min.js" %}"></script>
 
-<!-- Custom scripts for all pages-->
-<script src="{% static "js/sb-admin-2.min.js" %}"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="{% static "js/sb-admin-2.min.js" %}"></script>
 
-<!-- Page level plugins -->
-<script src="{% static "vendor/chart.js/Chart.min.js" %}"></script>
+    <!-- Page level plugins -->
+    <script src="{% static "vendor/chart.js/Chart.min.js" %}"></script>
 
-<!-- Page level custom scripts -->
-<script src="{% static "js/demo/chart-area-demo.js" %}"></script>
-<script src="{% static "js/demo/chart-pie-demo.js" %}"></script>
-<script>
-    $(document).ready(function () {
-        $('#table_id').DataTable();
-    });
-
-    var follow = function (user_id) {
-        $.ajax({
-            method: "GET",
-            url: "/activity/follow/{{ ctype_user.pk }}/" + user_id,
-            success: function (data) {
-                $("#BigButton").clone().appendTo("#rightDiv");
-                $("#follow-success").show();
-                $("#follow-success").fadeOut(1800);
-                console.log("success");
-            },
-        });
-        return false;
-    };
-
-    var unfollow = function (user_id) {
-        $.ajax({
-            method: "GET",
-            url: "/activity/unfollow/{{ ctype_user.pk }}/" + user_id,
-            success: function (data) {
-                $("#BigButton").clone().appendTo("#rightDiv");
-                $("#unfollow-success").show();
-                $("#unfollow-success").fadeOut(1800);
-                console.log("success");
-            },
-        });
-        return false;
-    };
-
-    var follow_community = function (community_id) {
-        $.ajax({
-            method: "GET",
-            url: "/activity/follow_all/{{ ctype_community.pk }}/" + community_id,
-            success: function (data) {
-                $("#BigButton").clone().appendTo("#rightDiv");
-                $("#follow-success").show();
-                $("#follow-success").fadeOut(1800);
-                console.log("success");
-            },
-        });
-        return false;
-    };
-
-
-    document.addEventListener("selectionchange", function() {
-        var selection = window.getSelection();
-        setTimeout(console.log('Selection changed.', selection), 6000);
-
+    <!-- Page level custom scripts -->
+    <script src="{% static "js/demo/chart-area-demo.js" %}"></script>
+    <script src="{% static "js/demo/chart-pie-demo.js" %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
         });
 
-            var annotateContext = {};
+        var follow = function (user_id) {
+            $.ajax({
+                method: "GET",
+                url: "/activity/follow/{{ ctype_user.pk }}/" + user_id,
+                success: function (data) {
+                    $("#BigButton").clone().appendTo("#rightDiv");
+                    $("#follow-success").show();
+                    $("#follow-success").fadeOut(1800);
+                    console.log("success");
+                },
+            });
+            return false;
+        };
+
+        var unfollow = function (user_id) {
+            $.ajax({
+                method: "GET",
+                url: "/activity/unfollow/{{ ctype_user.pk }}/" + user_id,
+                success: function (data) {
+                    $("#BigButton").clone().appendTo("#rightDiv");
+                    $("#unfollow-success").show();
+                    $("#unfollow-success").fadeOut(1800);
+                    console.log("success");
+                },
+            });
+            return false;
+        };
+
+        var follow_community = function (community_id) {
+            $.ajax({
+                method: "GET",
+                url: "/activity/follow_all/{{ ctype_community.pk }}/" + community_id,
+                success: function (data) {
+                    $("#BigButton").clone().appendTo("#rightDiv");
+                    $("#follow-success").show();
+                    $("#follow-success").fadeOut(1800);
+                    console.log("success");
+                },
+            });
+            return false;
+        };
+
+
+        document.addEventListener("selectionchange", function () {
+            var selection = window.getSelection();
+            setTimeout(console.log('Selection changed.', selection), 6000);
+
+        });
+
+        var annotateContext = {};
 
         function myFunction() {
             console.log("func1");
-          let selectionEndTimeout = null,
-          event = new Event('selectionEnd');
-          document.addEventListener('selectionEnd', function (evt/*event*/) {
-              console.log("End selection!")
-          }, false);
+            let selectionEndTimeout = null,
+                event = new Event('selectionEnd');
+            document.addEventListener('selectionEnd', function (evt/*event*/) {
+                console.log("End selection!")
+            }, false);
 
-          [
-            "mouseup",
-            "selectionchange"
-          ].map(e => {
-            document.addEventListener(e.toString(),(evt/*event*/)=>{
+            [
+                "mouseup",
+                "selectionchange"
+            ].map(e => {
+                document.addEventListener(e.toString(), (evt/*event*/) => {
 
-              if (selectionEndTimeout && evt.type == "selectionchange") {
-                  clearTimeout(selectionEndTimeout);
-                  console.info('User Selection Changed');
-              }
+                    if (selectionEndTimeout && evt.type == "selectionchange") {
+                        clearTimeout(selectionEndTimeout);
+                        console.info('User Selection Changed');
+                    }
 
-              selectionEndTimeout = setTimeout(function () {
-                  if (evt.type == "mouseup" && window.getSelection().toString() != "") {
-                      document.dispatchEvent(event);
-                  }
-              }, 100);
+                    selectionEndTimeout = setTimeout(function () {
+                        if (evt.type == "mouseup" && window.getSelection().toString() != "") {
+                            document.dispatchEvent(event);
+                        }
+                    }, 100);
 
-            })
+                })
 
             })
 
@@ -613,18 +622,18 @@
                 console.log("You pressed OK!");
 
                 var note = prompt("Please enter your note:", "Note1");
-                  if (note == null || note == "") {
+                if (note == null || note == "") {
                     txt = "No note will be saved.";
-                  } else {
+                } else {
                     txt = "Note " + note + "will be saved.";
-                  }
-                  if (window.getSelection() == null || window.getSelection() == "") {
-                    alert( "No annotation will be saved.");
-                  }
+                }
+                if (window.getSelection() == null || window.getSelection() == "") {
+                    alert("No annotation will be saved.");
+                }
 
                 //annotateContext = window.getSelection().toString();
 
-                if (window.getSelection().focusNode.parentElement.id != null || window.getSelection().focusNode.parentElement.id !="") {
+                if (window.getSelection().focusNode.parentElement.id != null || window.getSelection().focusNode.parentElement.id != "") {
                     annotateContext = {
                         "@context": "http://www.w3.org/ns/anno.jsonld",
                         "type": "Annotation",
@@ -641,8 +650,7 @@
                             }
                         }
                     };
-                }
-                else if (window.getSelection().focusNode.parentElement.className != null || window.getSelection().focusNode.parentElement.className !=""){
+                } else if (window.getSelection().focusNode.parentElement.className != null || window.getSelection().focusNode.parentElement.className != "") {
                     annotateContext = {
                         "@context": "http://www.w3.org/ns/anno.jsonld",
                         "type": "Annotation",
@@ -659,8 +667,7 @@
                             }
                         }
                     };
-                }
-                else{
+                } else {
                     var element = window.getSelection();
                     var path = getPathTo(element);
                     annotateContext = {
@@ -681,37 +688,37 @@
                     };
                 }
                 console.log(annotateContext);
-              }
-              else {
-              txt = "You pressed Cancel!";
+            } else {
+                txt = "You pressed Cancel!";
             }
 
         }
+
         function getPathTo(element) {
-                        var ix = 0;
-                        var siblings = element.focusNode.parentNode.childNodes;
-                        for (var i = 0; i < siblings.length; i++) {
-                            var sibling = siblings[i];
-                            if (sibling === element)
-                                return getPathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']';
-                            if (sibling.nodeType === 1 && sibling.tagName === element.tagName)
-                                ix++;
-                        }
-                    }
+            var ix = 0;
+            var siblings = element.focusNode.parentNode.childNodes;
+            for (var i = 0; i < siblings.length; i++) {
+                var sibling = siblings[i];
+                if (sibling === element)
+                    return getPathTo(element.parentNode) + '/' + element.tagName + '[' + (ix + 1) + ']';
+                if (sibling.nodeType === 1 && sibling.tagName === element.tagName)
+                    ix++;
+            }
+        }
 
         function myFunction2() {
             console.log("func2");
-           // var selection = window.getSelection();
+            // var selection = window.getSelection();
 
-          //var tobeposted = annotation_json(annotatable);
-          var r = confirm("Annotation to be posted : " + JSON.stringify(annotateContext));
+            //var tobeposted = annotation_json(annotatable);
+            var r = confirm("Annotation to be posted : " + JSON.stringify(annotateContext));
 
             if (r == true) {
 
-              console.log("You pressed OK!");
-              //if the selection is approved for annotation:
+                console.log("You pressed OK!");
+                //if the selection is approved for annotation:
                 //then save
-                console.log('annotate: ' + JSON.stringify(annotateContext) );
+                console.log('annotate: ' + JSON.stringify(annotateContext));
                 $.ajaxSetup({
                     beforeSend: function (xhr, settings) {
                         if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -737,58 +744,57 @@
                     }
                 });
                 //save
-              }
-              else {
-              txt = "You pressed Cancel!";
+            } else {
+                txt = "You pressed Cancel!";
             }
         };
 
 
-    var unfollow_community = function (community_id) {
-        $.ajax({
-            method: "GET",
-            url: "/activity/unfollow_all/{{ ctype_community.pk }}/" + community_id,
-            success: function (data) {
-                $("#BigButton").clone().appendTo("#rightDiv");
-                $("#unfollow-success").show();
-                $("#unfollow-success").fadeOut(1800);
-                console.log("success");
-            },
-        });
-        return false;
-    };
+        var unfollow_community = function (community_id) {
+            $.ajax({
+                method: "GET",
+                url: "/activity/unfollow_all/{{ ctype_community.pk }}/" + community_id,
+                success: function (data) {
+                    $("#BigButton").clone().appendTo("#rightDiv");
+                    $("#unfollow-success").show();
+                    $("#unfollow-success").fadeOut(1800);
+                    console.log("success");
+                },
+            });
+            return false;
+        };
 
-    var follow_post = function (post_id) {
-        $.ajax({
-            method: "GET",
-            url: "/activity/follow_all/{{ ctype_post.pk }}/" + post_id,
-            success: function (data) {
-                $("#BigButton").clone().appendTo("#rightDiv");
-                $("#follow-success").show();
-                $("#follow-success").fadeOut(1800);
-                console.log("success");
-            },
-        });
-        return false;
-    };
+        var follow_post = function (post_id) {
+            $.ajax({
+                method: "GET",
+                url: "/activity/follow_all/{{ ctype_post.pk }}/" + post_id,
+                success: function (data) {
+                    $("#BigButton").clone().appendTo("#rightDiv");
+                    $("#follow-success").show();
+                    $("#follow-success").fadeOut(1800);
+                    console.log("success");
+                },
+            });
+            return false;
+        };
 
-    var unfollow_post = function (post_id) {
-        $.ajax({
-            method: "GET",
-            url: "/activity/unfollow_all/{{ ctype_post.pk }}/" + post_id,
-            success: function (data) {
-                $("#BigButton").clone().appendTo("#rightDiv");
-                $("#unfollow-success").show();
-                $("#unfollow-success").fadeOut(1800);
-                console.log("success");
-            },
-        });
-        return false;
-    };
+        var unfollow_post = function (post_id) {
+            $.ajax({
+                method: "GET",
+                url: "/activity/unfollow_all/{{ ctype_post.pk }}/" + post_id,
+                success: function (data) {
+                    $("#BigButton").clone().appendTo("#rightDiv");
+                    $("#unfollow-success").show();
+                    $("#unfollow-success").fadeOut(1800);
+                    console.log("success");
+                },
+            });
+            return false;
+        };
 
-</script>
+    </script>
 
-<script>
+    <script>
 
 
         function csrfSafeMethod(method) {
@@ -798,7 +804,7 @@
 
         var flag_as_inappropriate = function (post_id, community_name, user_name) {
             var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
-           $.ajaxSetup({
+            $.ajaxSetup({
                 beforeSend: function (xhr, settings) {
                     if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                         xhr.setRequestHeader("X-CSRFToken", csrftoken);
@@ -808,7 +814,7 @@
             $.ajax({
                 method: "POST",
                 url: "{% url "community:flag-post-inappropriate" %}",
-                data: {"post_id":post_id},
+                data: {"post_id": post_id},
                 success: function (data) {
                     var flags_count = data["flags_count"];
                     window.location.reload();
@@ -819,7 +825,7 @@
         var flag_as_appropriate = function (post_id, community_name, user_name) {
 
             var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
-           $.ajaxSetup({
+            $.ajaxSetup({
                 beforeSend: function (xhr, settings) {
                     if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                         xhr.setRequestHeader("X-CSRFToken", csrftoken);
@@ -829,24 +835,24 @@
             $.ajax({
                 method: "POST",
                 url: "{% url "community:flag-post-appropriate" %}",
-                data: {"post_id":post_id},
+                data: {"post_id": post_id},
                 success: function (data) {
                     var flags_count = data["flags_count"];
                     window.location.reload();
-                    },
+                },
             })
         };
 
-        var listenAudioVersionOfPost= function (post_id){
+        var listenAudioVersionOfPost = function (post_id) {
             var input = document.getElementById(post_id);
             var CommunityName = input.innerHTML;
             var msgCommunityName = new SpeechSynthesisUtterance(CommunityName);
             window.speechSynthesis.speak(msgCommunityName);
 
-            var input2 = document.getElementById(post_id+ "description");
+            var input2 = document.getElementById(post_id + "description");
             var Description = input2.innerHTML;
-            var postContext ="Description " +  Description;
-             var msgCommunityName = new SpeechSynthesisUtterance(postContext);
+            var postContext = "Description " + Description;
+            var msgCommunityName = new SpeechSynthesisUtterance(postContext);
             window.speechSynthesis.speak(msgCommunityName);
 
         }
