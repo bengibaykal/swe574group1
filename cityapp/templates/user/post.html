@@ -25,10 +25,10 @@
         {% csrf_token %}
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">{{ post.name }}</h1>
-
+            <h1 class="h3 mb-0 text-gray-800" id="postName">{{ post.name }}</h1>
+            <span onclick="listenAudioVersion({{ post.id }})"><i class="fas fa-volume-up"></i>Listen Audio</span>
         </div>
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4" id ="allTags">
             {% for tag in post.tags.all %}
                 <a href="#">#{{ tag.name }}</a>
             {% endfor %}
@@ -77,17 +77,14 @@
                         <div class="card shadow mb-4">
                             <!-- Card Header - Dropdown -->
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">{{ key }}</h6>
+                                <h6 class="m-0 font-weight-bold text-primary" id = {{ key }}>{{ key }}</h6>
                             </div>
                             <!-- Card Body -->
-                            <div class="card-body">
+                            <div class="card-body" >
                                 {{ value }}
                             </div>
 
                         </div>
-
-
-
                     {% endif %}
                 {% endfor %}
                         <div class="card shadow mb-4">
@@ -189,7 +186,7 @@
         button.style.marginBottom="5px";
         button.style.marginTop="5px";
         textArea.name = "post";
-        textArea.maxLength = "30";
+        textArea.maxLength = "250";
         textArea.cols = "50";
         textArea.rows = "2";
         var commentDiv = document.getElementById("makeComment");
@@ -206,6 +203,30 @@
                 }
              })
         };
+    </script>
+    <script>
+    var listenAudioVersion= function (post_id) {
+        console.log(post_id)
+        var inputPostName = document.getElementById("postName");
+        var PostName = inputPostName.innerHTML;
+        var msgPostName = new SpeechSynthesisUtterance(PostName);
+        window.speechSynthesis.speak(msgPostName);
+
+        var length = document.getElementsByClassName("card-body").length;
+        for (var a = 0; a < length; a++) {
+            var inputTags = document.getElementsByClassName("card-body")[a];
+            var Name = document.getElementsByClassName("m-0 font-weight-bold text-primary")[a].innerHTML;
+            var Tags = inputTags.innerHTML;
+            var tagContext = Name +" "+ Tags;
+            console.log(tagContext)
+            tagContext = tagContext.split("#").join("");
+            if(tagContext.indexOf("</div>")==-1) {
+                var msgTags = new SpeechSynthesisUtterance(tagContext);
+                window.speechSynthesis.speak(msgTags);
+            }
+        }
+
+        }
     </script>
 {% endblock %}
 
