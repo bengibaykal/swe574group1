@@ -1,22 +1,22 @@
 import mi18n from 'mi18n'
-import { instanceDom, empty, remove, optionFields } from './dom'
-import { instanceData } from './data'
+import {empty, instanceDom, optionFields, remove} from './dom'
+import {instanceData} from './data'
 import {
-  mobileClass,
-  markup as m,
-  forEach,
-  camelCase,
-  escapeHtml,
-  trimObj,
-  subtract,
-  parseXML,
-  capitalize,
-  unique,
-  xmlAttrString,
-  flattenArray,
+    camelCase,
+    capitalize,
+    escapeHtml,
+    flattenArray,
+    forEach,
+    markup as m,
+    mobileClass,
+    parseXML,
+    subtract,
+    trimObj,
+    unique,
+    xmlAttrString,
 } from './utils'
 import events from './events'
-import { config } from './config'
+import {config} from './config'
 import control from './control'
 import controlCustom from './control/custom'
 

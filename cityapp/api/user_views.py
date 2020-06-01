@@ -1,11 +1,10 @@
+from community_user.serializers import UserRegistrationSerializer, UserLoginSerializer, TokenSerializer
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView, GenericAPIView
-from rest_framework.response import Response
 from rest_framework.generics import RetrieveDestroyAPIView
-from community_user.serializers import UserRegistrationSerializer, UserLoginSerializer, TokenSerializer
 from rest_framework.renderers import TemplateHTMLRenderer
-from django.shortcuts import redirect
+from rest_framework.response import Response
 
 
 class UserRegistrationAPIView(CreateAPIView):

@@ -1,6 +1,6 @@
-from django.urls import path
-from api.user_views import *
 from api.community_view import *
+from api.user_views import *
+from django.urls import path
 from rest_framework_swagger.views import get_swagger_view
 
 schema_view = get_swagger_view(title='Community API')

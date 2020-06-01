@@ -29,6 +29,8 @@
     <script type="text/javascript" charset="utf8"
             src="{% static "vendor/jquery/jquery.js" %}"></script>
     <script type="text/javascript" charset="utf8"
+            src="{% static "vendor/chart.js/Chart.js" %}"></script>
+    <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
 
     <link href="http://edge1y.tapmodo.com/deepliq/global.css" rel="stylesheet" type="text/css">
@@ -64,6 +66,11 @@
             <a class="nav-link" href="/">
                 <i class="fas fa-fw fa-newspaper"></i>
                 <span>Latest Posts</span></a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url "community:dashboard" %}">
+                <i class="fas fa-bell"></i>
+                <span>Dashboard - Profile</span></a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="{% url "community:notification_combined" %}">

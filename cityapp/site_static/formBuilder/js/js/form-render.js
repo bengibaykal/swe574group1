@@ -1,11 +1,11 @@
 import mi18n from 'mi18n'
-import utils, { parseXML } from './utils'
+import utils, {parseXML} from './utils'
 import events from './events'
 import layout from './layout'
 import control from './control'
 import './control'
 import controlCustom from './control/custom'
-import { defaultI18n } from './config'
+import {defaultI18n} from './config'
 import '../sass/form-render.scss'
 
 /**

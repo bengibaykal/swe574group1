@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import timezone
-
 from actstream import action
-from django.contrib.sites.models import Site
-from django.db.models.signals import post_save
-from django.utils.encoding import smart_text as smart_unicode
-from community_user.models import CommunityUser
 from city.models import City
-
-from django.db import models
-from django.utils.timezone import now
-from django.forms import ModelForm, ModelChoiceField
-from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.core.exceptions import NON_FIELD_ERRORS
+from community_user.models import CommunityUser
 from django.contrib.postgres.fields import JSONField
+from django.contrib.sites.models import Site
+from django.core.exceptions import NON_FIELD_ERRORS
+from django.db import models
+from django.db.models.signals import post_save
+from django.forms import ModelForm
+from django.utils.encoding import smart_text as smart_unicode
+from django.utils.timezone import now
 
 
 # Create your models here.
@@ -59,9 +55,9 @@ class Community(TimeStamped):
     public_option = models.BooleanField(default=True)
     city_id = models.ForeignKey(City, related_name="city_id", on_delete=models.CASCADE, blank=True, null=True)
 
-
     def __str__(self):
         return smart_unicode(self.name)
+
 
 # Creating Action Instances by Using Django Signals & Actstream Action
 def save_community(sender, instance, **kwargs):
@@ -105,6 +101,7 @@ class PostTemplate(TimeStamped):
     def __str__(self):
         return str(self.name)
 
+
 # Creating Action Instances by Using Django Signals & Actstream Action
 def save_posttemplate(sender, instance, **kwargs):
     action.send(instance.created_by, verb="Has Created A New Post Template - ", description="New Post Template",
@@ -112,6 +109,7 @@ def save_posttemplate(sender, instance, **kwargs):
 
 
 post_save.connect(save_posttemplate, sender=PostTemplate)
+
 
 class Post(TimeStamped):
     name = models.CharField(max_length=55, blank=True, null=True)
@@ -123,14 +121,15 @@ class Post(TimeStamped):
     post_template = models.ForeignKey(PostTemplate, related_name="post_template", on_delete=models.CASCADE, blank=True,
                                       null=True)
     post_content = JSONField(null=True)
-    latitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Lat
-    longitude = models.FloatField(null=True, blank=True) # To Fix Post Creation Issue Due To Empty Long
+    latitude = models.FloatField(null=True, blank=True)  # To Fix Post Creation Issue Due To Empty Lat
+    longitude = models.FloatField(null=True, blank=True)  # To Fix Post Creation Issue Due To Empty Long
     audio_version = models.FileField(max_length=55, null=True)
-    flags = models.IntegerField(default=0, null=True, blank=True,)
-    flaggedUsers = models.ManyToManyField(CommunityUser, related_name= 'flagged_users')
+    flags = models.IntegerField(default=0, null=True, blank=True, )
+    flaggedUsers = models.ManyToManyField(CommunityUser, related_name='flagged_users')
 
     def __str__(self):
         return smart_unicode(self.name)
+
 
 # Creating Action Instances by Using Django Signals & Actstream Action
 def save_post(sender, instance, **kwargs):
@@ -140,6 +139,7 @@ def save_post(sender, instance, **kwargs):
 
 post_save.connect(save_post, sender=Post)
 
+
 class DataFileField(TimeStamped):
     name = models.CharField(max_length=55)
     file_field = models.FileField(max_length=55, null=True)
@@ -148,14 +148,16 @@ class DataFileField(TimeStamped):
     def __str__(self):
         return smart_unicode(self.name)
 
+
 class Comment(TimeStamped):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="related_post")
     created_by = models.ForeignKey(CommunityUser, on_delete=models.CASCADE, related_name="comment_author",
-                                        null=True)
+                                   null=True)
     content = models.TextField(null=True)
 
     def __str__(self):
         return self.post.name
+
 
 # Creating Action Instances by Using Django Signals & Actstream Action
 def save_comment(sender, instance, **kwargs):
@@ -164,6 +166,7 @@ def save_comment(sender, instance, **kwargs):
 
 
 post_save.connect(save_comment, sender=Comment)
+
 
 # todo
 class Recommendation(models.Model):

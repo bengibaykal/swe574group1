@@ -1,23 +1,19 @@
-from django.forms import modelform_factory
-from django.shortcuts import render
-
 # Create your views here.
+import base64
+
+from city.models import City
+from city.serializers import CitySerializer
+from community.models import Community
+from django.core import serializers
+from django.core.files.base import ContentFile
+from django.http import JsonResponse
 from rest_framework.generics import (ListAPIView,
                                      RetrieveAPIView,
                                      DestroyAPIView,
                                      UpdateAPIView,
                                      CreateAPIView, )
-
-from city.models import City
-from community.models import Community
-from city.serializers import CitySerializer
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
-from django.http import JsonResponse
-import base64
-from django.core.files.base import ContentFile
-from django.core import serializers
-import json
 
 
 #Format for Uploading an image

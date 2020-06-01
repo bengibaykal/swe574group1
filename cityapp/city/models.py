@@ -1,9 +1,7 @@
-from actstream import action
-from django.db import models
-from django.db.models.signals import post_save
-from django.utils import timezone
 # Create your models here.
 from community_user.models import CommunityUser
+from django.db import models
+from django.utils import timezone
 
 
 class City(models.Model):

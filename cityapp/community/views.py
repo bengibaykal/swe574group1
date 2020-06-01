@@ -1,42 +1,36 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-from actstream.actions import is_following
-from actstream.models import following, Follow, Action, followers
-from actstream.registry import check
-from rest_framework import status
-from django.shortcuts import redirect
-import actstream
-from actstream import models
-from django.contrib.contenttypes.models import ContentType
+from django.db.models import Count
+from actstream.models import following, Follow, Action
 from community.models import *
-from django.shortcuts import render
 from community.models import *
-from django.contrib.auth import authenticate, login, get_user_model
-from django.contrib.auth import logout
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView, CreateAPIView, RetrieveAPIView
-from django.db.models import Q
-from community_user.models import *
-from community_user.permissions import *
-from django.forms import modelform_factory
-from django.http import JsonResponse
-from community_user.serializers import *
 from community.serializers import PostSerializer
-from django.core import serializers
-from actstream.decorators import stream
-
-
-
+from community_user.models import *
 # Create your views here.
 from community_user.models import CommunityUser
+from community_user.permissions import *
+from community_user.serializers import *
+from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import logout
+from django.contrib.contenttypes.models import ContentType
+from django.core import serializers
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db.models import Q
+from django.forms import modelform_factory
+from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.shortcuts import render
+from rest_framework import status
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from datetime import datetime
 
 USER_MODEL = get_user_model()
+
+
 class IndexTemplateView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "index.html"
@@ -331,7 +325,7 @@ class JoinedCommunitiesListTemplateView(APIView):
     template_name = 'user/joined_communities.html'
 
     def get(self, request):
-        communities = Community.objects.filter(joined_users=request.user) # For My Communities Panel
+        communities = Community.objects.filter(joined_users=request.user)  # For My Communities Panel
         queryset = Community.objects.filter(joined_users=self.request.user)
         return Response({'comms': queryset, "user": request.user, "communities": communities})
 
@@ -370,8 +364,10 @@ def notification(request):
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
     user_activities = Action.objects.filter(actor_object_id__in=id_users).order_by("-timestamp")[:8]
-    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
-    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(
+        target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(
+        target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
 
     return render(request, 'user/activity.html',
                   context={
@@ -429,8 +425,9 @@ def notification_community(request):
         id_communities.append(i.id)
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
 
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(
+        target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
 
     return render(request, 'user/activity_community.html',
                   context={
@@ -459,7 +456,9 @@ def notification_post(request):
         id_posts.append(i.id)
 
     # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
+
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(
+        target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
 
     return render(request, 'user/activity_post.html',
                   context={
@@ -470,6 +469,7 @@ def notification_post(request):
                       'posts': posts
                   }
                   )
+
 
 def followings(request):
     communities = Community.objects.filter(joined_users=request.user)
@@ -483,7 +483,6 @@ def followings(request):
     print(following_communities)
     print(following_posts)
     print(following_users)
-
 
     return render(request, 'user/followings.html',
                   context={
@@ -507,7 +506,6 @@ def followings_user(request):
 
     print(following_users)
 
-
     return render(request, 'user/followings_user.html',
                   context={
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
@@ -527,7 +525,6 @@ def followings_community(request):
     following_communities = following(request.user, Community)[:50]
 
     print(following_communities)
-
 
     return render(request, 'user/followings_community.html',
                   context={
@@ -549,8 +546,6 @@ def followings_post(request):
 
     print(following_posts)
 
-
-
     return render(request, 'user/followings_post.html',
                   context={
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
@@ -561,12 +556,15 @@ def followings_post(request):
                   }
                   )
 
+
 def followers(request):
     communities = Community.objects.filter(joined_users=request.user)
     posts = Post.objects.filter(created_by=request.user)
 
     ctype_user = ContentType.objects.get_for_model(USER_MODEL)
-    user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(content_type=ctype_user).values_list("user_id")[:50]
+    user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(content_type=ctype_user).values_list(
+        "user_id")[:50]
+
     followers_usernames = CommunityUser.objects.filter(id__in=user_followers_ids)
 
     print(user_followers_ids)
@@ -596,13 +594,14 @@ class FlagPostAsInappropriate(APIView):
         post.save()
         return Response({'flags_count': post.flags, 'flagged': flagged})
 
+
 class FlagPostAsAppropriate(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = PostSerializer
 
     def post(self, request):
         print("Inside the Appropriate")
-        flagged = False;
+        flagged = False
         post = Post.objects.get(id=request.data["post_id"])
         post.flags -= 1
         post.flaggedUsers.remove(request.user)
@@ -615,3 +614,52 @@ class GetAllUsersTemplateView(APIView):
         queryset = CommunityUser.objects.all()
         serialized_qs = serializers.serialize('json', queryset)
         return Response({'users': serialized_qs})
+
+
+class CommunityDashboardTemplateView(APIView):
+    permission_classes = (IsAuthenticated,)
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/dashboard.html'
+
+    def get(self, request):
+        communities = Community.objects.filter(joined_users=self.request.user)
+        posts = Post.objects.filter(created_by=request.user)
+        created_post_count = posts.count()
+
+        ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+        user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(
+            content_type=ctype_user).values_list("user_id")
+
+        follower_count = user_followers_ids.count()
+
+        following_users = following(request.user, CommunityUser)
+        id_users = []
+        for i in following_users:
+            id_users.append(i.id)
+        following_users_count = len(id_users)
+
+        popular_communities = Community.objects.annotate(number_of_posts=Count('post'))[:5]
+        for i in range(0, len(popular_communities)):
+            print(popular_communities[i].name)
+
+        return Response(
+            {"user": request.user, "communities": communities, "created_post_count": created_post_count,
+             "follower_count": follower_count, "following_users_count": following_users_count,
+             "popular_communities": popular_communities})
+
+    def post(self, request):
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        re_new_password = request.POST.get("re_new_password")
+
+        user = request.user
+        success = user.check_password(old_password)
+
+        if not success:
+            return JsonResponse({"error": "False Old Password"}, status=403)
+        elif re_new_password != new_password:
+            return JsonResponse({"error": "Passwords not matching"}, status=403)
+        else:
+            user.set_password(new_password)
+            user.save()
+            return JsonResponse({"success": "Passwords changed successfully"}, status=200)

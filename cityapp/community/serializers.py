@@ -1,7 +1,6 @@
-from rest_framework import serializers
-from rest_framework.serializers import SerializerMethodField
 from community.models import *
 from community_user.models import CommunityUser
+from rest_framework import serializers
 
 
 class DataTypeSerializer(serializers.ModelSerializer):
