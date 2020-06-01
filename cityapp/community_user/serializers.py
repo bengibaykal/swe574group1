@@ -1,8 +1,7 @@
-from django.contrib.auth import authenticate
 from community_user.models import CommunityUser
+from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
-
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 

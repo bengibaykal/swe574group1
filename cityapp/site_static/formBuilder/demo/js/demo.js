@@ -1,6 +1,6 @@
 import '../sass/demo.scss'
-import { insertStyle, removeStyle } from '../../js/utils'
-import { builderActions, renderActions, demoActions } from './actionButtons'
+import {insertStyle, removeStyle} from '../../js/utils'
+import {builderActions, demoActions, renderActions} from './actionButtons'
 
 const localeSessionKey = 'formBuilder-locale'
 const defaultLocale = 'en-US'

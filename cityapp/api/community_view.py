@@ -1,15 +1,14 @@
-from rest_framework.generics import CreateAPIView, GenericAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, \
+from community.models import Comment
+from community.permissions import IsUserInCommunity, IsOwner
+from community.serializers import *
+from community_user.permissions import IsUserCommunityBuilder
+from django.core import serializers
+from django.db.models import Q
+from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, \
     RetrieveAPIView
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
-from community_user.permissions import IsUserCommunityBuilder
-from community.permissions import IsUserInCommunity, IsOwner
 from rest_framework.response import Response
-from community.serializers import *
-from django.db.models import Q
-
-from community.models import Comment
-from django.core import serializers
 
 
 class CreateCommunityAPIView(CreateAPIView):

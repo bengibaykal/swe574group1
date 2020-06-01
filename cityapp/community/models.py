@@ -1,21 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from datetime import timezone
-
 from actstream import action
-from django.contrib.sites.models import Site
-from django.db.models.signals import post_save
-from django.utils.encoding import smart_text as smart_unicode
-from community_user.models import CommunityUser
 from city.models import City
-
-from django.db import models
-from django.utils.timezone import now
-from django.forms import ModelForm, ModelChoiceField
-from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.core.exceptions import NON_FIELD_ERRORS
+from community_user.models import CommunityUser
 from django.contrib.postgres.fields import JSONField
+from django.contrib.sites.models import Site
+from django.core.exceptions import NON_FIELD_ERRORS
+from django.db import models
+from django.db.models.signals import post_save
+from django.forms import ModelForm
+from django.utils.encoding import smart_text as smart_unicode
+from django.utils.timezone import now
 
 
 # Create your models here.

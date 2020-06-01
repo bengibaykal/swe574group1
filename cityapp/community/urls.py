@@ -1,7 +1,6 @@
-from django.urls import path
-from community.views import *
-
 from community import feeds
+from community.views import *
+from django.urls import path
 
 app_name = 'community'
 

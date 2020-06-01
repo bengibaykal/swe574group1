@@ -1,19 +1,12 @@
 import json
 
 from actstream.feeds import UserActivityMixin, AbstractActivityStream
-from django.shortcuts import get_object_or_404
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.feedgenerator import Atom1Feed, rfc3339_date
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.syndication.views import Feed, add_domain
-from django.contrib.sites.models import Site
+from django.contrib.syndication.views import Feed
+from django.http import HttpResponse
 from django.utils.encoding import force_str
-from django.utils import datetime_safe
+from django.utils.feedgenerator import rfc3339_date
 from django.views.generic import View
-from django.http import HttpResponse, Http404
-from django.urls import reverse
-
-from actstream.models import Action, model_stream, user_stream, any_stream
 
 
 class AbstractActivityStream_W3C2(AbstractActivityStream):

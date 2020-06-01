@@ -1,29 +1,28 @@
 import '../sass/form-builder.scss'
 import throttle from 'lodash/throttle'
-import Dom from './dom'
-import { remove } from './dom'
-import { Data } from './data'
+import Dom, {remove} from './dom'
+import {Data} from './data'
 import mi18n from 'mi18n'
 import events from './events'
 import layout from './layout'
 import Helpers from './helpers'
-import { defaultOptions, defaultI18n, config, styles } from './config'
+import {config, defaultI18n, defaultOptions, styles} from './config'
 import Controls from './controls'
 import {
-  subtract,
-  hyphenCase,
-  nameAttr,
-  trimObj,
-  forEach,
-  markup,
-  removeFromArray,
-  attrString,
-  capitalize,
-  parsedHtml,
-  addEventListeners,
-  closest,
-  safename,
-  forceNumber,
+    addEventListeners,
+    attrString,
+    capitalize,
+    closest,
+    forceNumber,
+    forEach,
+    hyphenCase,
+    markup,
+    nameAttr,
+    parsedHtml,
+    removeFromArray,
+    safename,
+    subtract,
+    trimObj,
 } from './utils'
 
 const DEFAULT_TIMEOUT = 333

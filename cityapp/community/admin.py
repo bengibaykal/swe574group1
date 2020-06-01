@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from community.models import Community, Post, PostTemplate, Comment
 from django.contrib import admin
 

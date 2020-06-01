@@ -1,8 +1,8 @@
 import './control'
 import control from './control'
 import controlCustom from './control/custom'
-import { unique, hyphenCase, markup as m } from './utils'
-import { empty } from './dom'
+import {hyphenCase, markup as m, unique} from './utils'
+import {empty} from './dom'
 
 /**
  * control parent class for creating control panel

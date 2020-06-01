@@ -1,5 +1,5 @@
-from django.urls import path
 from activity_stream.views import *
+from django.urls import path
 
 app_name = 'community'
 

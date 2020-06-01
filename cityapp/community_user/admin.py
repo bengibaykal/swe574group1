@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.apps import apps
-from community_user.models import CommunityUser
+
 from community.models import *
+from community_user.models import CommunityUser
 from django.contrib import admin
-from django.apps import apps
 
 # Register your models here.
 
