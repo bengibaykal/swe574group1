@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_extensions',
     'django.contrib.sites',  # Actstream Integration
-    'actstream'  # Actstream App
+    'actstream',  # Actstream App
+    'annotations'
 ]
 
 SITE_ID = 1
