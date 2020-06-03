@@ -2,6 +2,18 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
+{% block head_css %}
+    <style>
+        .h-100 {
+            height: auto !important;
+        }
+
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+        }
+    </style>
+{% endblock %}
 {% block wrapper %}
     <!-- Masthead -->
     <div class="col-md-10 col-lg-10 col-xl-10 mx-auto">
@@ -12,18 +24,18 @@
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <a href="{% url "community:user-posts" user.id %}">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Created Posts
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Created Posts
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{ created_post_count }}</div>
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ created_post_count }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-copy fa-2x text-gray-300"></i>
+                                <div class="col-auto">
+                                    <i class="fas fa-copy fa-2x text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     </a>
                 </div>
             </div>
@@ -67,6 +79,15 @@
             </div>
         </div>
         <div class="row">
+            <div class="col-lg-12">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">{{ key }}</h6>
+                    </div>
+                    <input id="location" hidden value="42.1,43.2">
+                    <div id="map"></div>
+                </div>
+            </div>
             <div class="card shadow col-md-12">
                 <div class="card-header py-12">
                     <h6 class="m-0 font-weight-bold text-primary">Popular Communities By Posts</h6>
@@ -128,6 +149,32 @@ margin-bottom: 20px;">
     </div>
     <script type="text/javascript" charset="utf8"
             src="{% static "vendor/chart.js/Chart.js" %}"></script>
+    <script>
+        function initMap() {
+
+            var uluru = {lat: parseFloat("{{ posts.0.latitude }}"), lng: parseFloat("{{ posts.0.longitude }}"),};
+            // The map, centered at Uluru
+            var map = new google.maps.Map(
+                document.getElementById('map'), {zoom: 1, center: uluru});
+            // The marker, positioned at Uluru
+
+
+            {% for post in posts %}
+                console.log("{{post.latitude}}");
+                new google.maps.Marker({
+                    position: {
+                        lat: parseFloat("{{ post.latitude }}"),
+                        lng: parseFloat("{{ post.longitude }}")
+                    }, map: map
+                });
+            {% endfor %}
+
+
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDX0K8j8RSzk2VyXi3Eks1cy-muY2FmD50&callback=initMap">
+    </script>
     <script>
         // Set new default font family and font color to mimic Bootstrap's default styling
         Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
@@ -278,8 +325,8 @@ margin-bottom: 20px;">
             return false;
         };
 
-
     </script>
+
 {% endblock %}
 
 </html>

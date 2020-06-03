@@ -623,8 +623,10 @@ class CommunityDashboardTemplateView(APIView):
 
     def get(self, request):
         communities = Community.objects.filter(joined_users=self.request.user)
-        posts = Post.objects.filter(created_by=request.user)
-        created_post_count = posts.count()
+        created_posts = Post.objects.filter(created_by=request.user)
+        created_post_count = created_posts.count()
+
+        posts = Post.objects.filter(community__in=communities)
 
         ctype_user = ContentType.objects.get_for_model(USER_MODEL)
         user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(
@@ -645,7 +647,7 @@ class CommunityDashboardTemplateView(APIView):
         return Response(
             {"user": request.user, "communities": communities, "created_post_count": created_post_count,
              "follower_count": follower_count, "following_users_count": following_users_count,
-             "popular_communities": popular_communities})
+             "popular_communities": popular_communities, "posts": posts})
 
     def post(self, request):
         old_password = request.POST.get("old_password")
