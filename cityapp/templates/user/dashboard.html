@@ -79,15 +79,47 @@
             </div>
         </div>
         <div class="row">
+{#            <div class="col-lg-12 card-body">#}
+{#                <table id="table_id" class="display" style="width: 100%;">#}
+{#                    <thead>#}
+{#                    <tr>#}
+{#                        <th>Community Name</th>#}
+{#                        <th>Tags</th>#}
+{#                        <th>#Users</th>#}
+{#                        <th>Created By</th>#}
+{#                        <th>Join</th>#}
+{#                        <th>City</th>#}
+{##}
+{#                    </tr>#}
+{#                    </thead>#}
+{#                    <tbody>#}
+{#                    {% for comm in communities %}#}
+{#                        <tr>#}
+{#                            <td><a href="{% url "community:community-detail" comm.id %}">{{ comm.name }}</a></td>#}
+{#                            <td>{% for tag in comm.tags.all %}{{ tag.name }} {% endfor %}</td>#}
+{#                            <td>{{ comm.joined_users.count }}</td>#}
+{#                            <td>{{ comm.created_by.username }}</td>#}
+{#                            {% if user not in comm.joined_users.all %}#}
+{#                                <td><a class="button" href="{% url "community:join-community" comm.id %}">Join</a></td>#}
+{#                            {% else %}#}
+{#                                <td>Joined</td>#}
+{#                            {% endif %}#}
+{#                            <td>{{ comm.city_id }}</td>#}
+{#                        </tr>#}
+{#                    {% endfor %}#}
+{#                    </tbody>#}
+{#                </table>#}
+{#            </div>#}
             <div class="col-lg-12">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                         <h6 class="m-0 font-weight-bold text-primary">{{ key }}</h6>
                     </div>
-                    <input id="location" hidden value="42.1,43.2">
+                    <input id="location" hidden value="">
                     <div id="map"></div>
                 </div>
             </div>
+
             <div class="card shadow col-md-12">
                 <div class="card-header py-12">
                     <h6 class="m-0 font-weight-bold text-primary">Popular Communities By Posts</h6>
@@ -153,10 +185,9 @@ margin-bottom: 20px;">
         function initMap() {
 
             var uluru = {lat: parseFloat("{{ posts.0.latitude }}"), lng: parseFloat("{{ posts.0.longitude }}"),};
-            // The map, centered at Uluru
+
             var map = new google.maps.Map(
                 document.getElementById('map'), {zoom: 1, center: uluru});
-            // The marker, positioned at Uluru
 
 
             {% for post in posts %}
