@@ -623,8 +623,10 @@ class CommunityDashboardTemplateView(APIView):
 
     def get(self, request):
         communities = Community.objects.filter(joined_users=self.request.user)
-        posts = Post.objects.filter(created_by=request.user)
-        created_post_count = posts.count()
+        created_posts = Post.objects.filter(created_by=request.user)
+        created_post_count = created_posts.count()
+
+        posts = Post.objects.filter(community__in=communities)
 
         ctype_user = ContentType.objects.get_for_model(USER_MODEL)
         user_followers_ids = Follow.objects.filter(object_id=request.user.id).filter(
@@ -645,7 +647,7 @@ class CommunityDashboardTemplateView(APIView):
         return Response(
             {"user": request.user, "communities": communities, "created_post_count": created_post_count,
              "follower_count": follower_count, "following_users_count": following_users_count,
-             "popular_communities": popular_communities})
+             "popular_communities": popular_communities, "posts": posts})
 
     def post(self, request):
         old_password = request.POST.get("old_password")
@@ -675,3 +677,26 @@ class UserCreatedPostsTemplateView(APIView):
         communities = Community.objects.filter(joined_users=self.request.user)
         user_page = CommunityUser.objects.filter(id=user_id).first()
         return Response({'posts': posts, "user": request.user, "communities": communities, "user_page": user_page})
+
+
+class DashboardSearch(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        query = self.request.query_params.get('query', None)
+        query_post_templates = PostTemplate.objects.filter(
+            Q(custom_template__contains=query) | Q(tags__name__contains=query) | Q(name__contains=query) | Q(
+                description__contains=query) | Q(
+                community__name__contains=query))
+
+        query_posts = Post.objects.filter(
+            Q(post_template__in=query_post_templates) | Q(name__contains=query) | Q(description__contains=query) | Q(
+                community__name__contains=query) | Q(tags__name__contains=query))
+
+        query_communities = Community.objects.filter(
+            Q(name__contains=query) | Q(description__contains=query) | Q(tags__name__contains=query))
+
+        return JsonResponse(
+            {'query_post_templates': query_post_templates, "query_posts": query_posts.user,
+             "query_communities": query_communities,
+             })

@@ -97,13 +97,14 @@ class CommentCreateAPIView(CreateAPIView, ListModelMixin):
         return self.list(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        return serializer.save(created_by = self.request.user)
+        return serializer.save(created_by=self.request.user)
 
 
 # Create Comment for Specific Post / Post ID Taken From URL
 class CommentCreateAPIView_ForSpecificPost(CreateAPIView, ListModelMixin):
     permission_classes = (IsAuthenticated,)
     serializer_class = CommentCreateSerializer_ForSpecificPost
+
     def get_queryset(self):
         post = self.kwargs['pk']
         queryset = Comment.objects.filter(post_id=post)
@@ -143,6 +144,7 @@ class CommentListAPIView_ForSpecificPost(ListAPIView):
         serialized_qs = serializers.serialize('json', queryset)
         return Response({'comments': serialized_qs})
 
+
 # Delete API View
 class CommentDeleteAPIView(DestroyAPIView):
     queryset = Comment.objects.all()
@@ -150,10 +152,10 @@ class CommentDeleteAPIView(DestroyAPIView):
     serializer_class = CommentDeleteUpdateSerializer
     permission_classes = [IsAuthenticated, IsOwner]
 
+
 # Update API View
 class CommentUpdateAPIView(UpdateAPIView, RetrieveAPIView):
     queryset = Comment.objects.all()
     lookup_field = "pk"
     serializer_class = CommentDeleteUpdateSerializer
     permission_classes = [IsAuthenticated, IsOwner]
-
