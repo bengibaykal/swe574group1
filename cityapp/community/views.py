@@ -46,11 +46,12 @@ class IndexTemplateView(APIView):
             following_objects = following(request.user)
             ctype_community = ContentType.objects.get_for_model(Community)
             ctype_post = ContentType.objects.get_for_model(Post)
+            ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
             ctype_user = ContentType.objects.get_for_model(USER_MODEL)
             print(request.user)
             return Response({"posts": posts, "communities": communities, "user": request.user,
                              "following": following_objects, "ctype_community": ctype_community,
-                             "ctype_post": ctype_post, "ctype_user": ctype_user},
+                             "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate":ctype_posttemplate},
                             status=status.HTTP_200_OK
                             )
         return Response(
@@ -341,14 +342,17 @@ def notification(request):
     # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
     following_communities = following(request.user, Community)
     following_posts = following(request.user, Post)
+    following_posttemplates = following(request.user, PostTemplate)
     following_users = following(request.user, CommunityUser)
 
     ctype_community = ContentType.objects.get_for_model(Community)
     ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
 
-    print(following_communities)
-    print(following_posts)
-    print(following_users)
+    print("Following Users=" + str(following_users))
+    print("Following Communities=" + str(following_communities))
+    print("Following Post Templates=" + str(following_posttemplates))
+    print("Following Posts=" + str(following_posts))
 
     id_users = []
     for i in following_users:
@@ -362,19 +366,25 @@ def notification(request):
     for i in following_posts:
         id_posts.append(i.id)
 
-    # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
-    user_activities = Action.objects.filter(actor_object_id__in=id_users).order_by("-timestamp")[:8]
-    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(
-        target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
-    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(
-        target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:8]
+    id_posttemplates = []
+    for i in following_posttemplates:
+        id_posttemplates.append(i.id)
 
+    # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
+    user_activities = Action.objects.filter(actor_object_id__in=id_users).order_by("-timestamp")[:4]
+    model_community_activities = Action.objects.filter(target_object_id__in=id_communities).filter(
+        target_content_type=ctype_community).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:4]
+    model_post_activities = Action.objects.filter(target_object_id__in=id_posts).filter(
+        target_content_type=ctype_post).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:4]
+    model_posttemplate_activities = Action.objects.filter(target_object_id__in=id_posttemplates).filter(
+        target_content_type=ctype_posttemplate).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:4]
     return render(request, 'user/activity.html',
                   context={
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
                       'actor': request.user,
                       'user_activities': user_activities,
                       'communitiy_activities': model_community_activities,
+                      'posttemplate_activities': model_posttemplate_activities,
                       'post_activities': model_post_activities,
                       'communities': communities,
                       'posts': posts
@@ -465,6 +475,36 @@ def notification_post(request):
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
                       'actor': request.user,
                       'post_activities': model_post_activities,
+                      'communities': communities,
+                      'posts': posts
+                  }
+                  )
+
+
+def notification_posttemplate(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_posttemplates = following(request.user, PostTemplate)
+
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+
+    print("Following Post Templates=" + str(following_posttemplates))
+
+    id_posttemplates = []
+    for i in following_posttemplates:
+        id_posttemplates.append(i.id)
+
+    # https://docs.djangoproject.com/en/dev/topics/db/queries/#spanning-multi-valued-relationships
+    model_posttemplate_activities = Action.objects.filter(target_object_id__in=id_posttemplates).filter(
+        target_content_type=ctype_posttemplate).exclude(actor_object_id=request.user.id).order_by("-timestamp")[:50]
+
+    return render(request, 'user/activity_posttemplate.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'actor': request.user,
+                      'posttemplate_activities': model_posttemplate_activities,
                       'communities': communities,
                       'posts': posts
                   }

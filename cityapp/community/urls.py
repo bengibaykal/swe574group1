@@ -26,6 +26,7 @@ urlpatterns = [
     path('stream/user/', notification_user, name='notification_user_all'),
     path('stream/community/', notification_community, name='notification_community_all'),
     path('stream/post', notification_post, name='notification_post_all'),
+    path('stream/posttemplate', notification_posttemplate, name='notification_posttemplate_all'),
     path('followings/', followings, name='followings_combined'),
     path('followings/user/', followings_user, name='followings_user_all'),
     path('followings/community/', followings_community, name='followings_community_all'),

@@ -441,6 +441,20 @@
                                                     {% endif %}
                                                 {% endif %}
 
+                                                <!-- Follow PostTemplate -->
+                                                <div class="dropdown-header">Post Template: {{ post.post_template.name }}</div>
+                                                {% if post.post_template not in following %}
+                                                    <a class="dropdown-item"
+                                                       href="#"
+                                                       onclick="follow_posttemplate({{ post.post_template.id }});">Follow
+                                                        Post Template</a>
+                                                {% else %}
+                                                    <a class="dropdown-item"
+                                                       href="#"
+                                                       onclick="unfollow_posttemplate({{ post.post_template.id }});">Unfollow
+                                                        Post Template</a>
+                                                {% endif %}
+
                                                 <!-- Follow Community -->
                                                 <div class="dropdown-header">Community: {{ post.community.name }}</div>
                                                 {% if post.community not in following %}
@@ -544,6 +558,7 @@
                     $("#follow-success").show();
                     $("#follow-success").fadeOut(1800);
                     console.log("success");
+                    window.location.reload();
                 },
             });
             return false;
@@ -558,6 +573,7 @@
                     $("#unfollow-success").show();
                     $("#unfollow-success").fadeOut(1800);
                     console.log("success");
+                    window.location.reload();
                 },
             });
             return false;
@@ -572,6 +588,7 @@
                     $("#follow-success").show();
                     $("#follow-success").fadeOut(1800);
                     console.log("success");
+                    window.location.reload();
                 },
             });
             return false;
@@ -759,6 +776,7 @@
                     $("#unfollow-success").show();
                     $("#unfollow-success").fadeOut(1800);
                     console.log("success");
+                    window.location.reload();
                 },
             });
             return false;
@@ -773,6 +791,7 @@
                     $("#follow-success").show();
                     $("#follow-success").fadeOut(1800);
                     console.log("success");
+                    window.location.reload();
                 },
             });
             return false;
@@ -787,6 +806,37 @@
                     $("#unfollow-success").show();
                     $("#unfollow-success").fadeOut(1800);
                     console.log("success");
+                    window.location.reload();
+                },
+            });
+            return false;
+        };
+
+        var follow_posttemplate = function (posttemplate_id) {
+            $.ajax({
+                method: "GET",
+                url: "/activity/follow_all/{{ ctype_posttemplate.pk }}/" + posttemplate_id,
+                success: function (data) {
+                    $("#BigButton").clone().appendTo("#rightDiv");
+                    $("#follow-success").show();
+                    $("#follow-success").fadeOut(1800);
+                    console.log("success");
+                    window.location.reload();
+                },
+            });
+            return false;
+        };
+
+        var unfollow_posttemplate = function (posttemplate_id) {
+            $.ajax({
+                method: "GET",
+                url: "/activity/unfollow_all/{{ ctype_posttemplate.pk }}/" + posttemplate_id,
+                success: function (data) {
+                    $("#BigButton").clone().appendTo("#rightDiv");
+                    $("#unfollow-success").show();
+                    $("#unfollow-success").fadeOut(1800);
+                    console.log("success");
+                    window.location.reload();
                 },
             });
             return false;
