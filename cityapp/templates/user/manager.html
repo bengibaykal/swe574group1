@@ -406,9 +406,8 @@
                                                    onclick="flag_as_inappropriate({{ post.id }}, '{{ post.community.name }}', '{{ user.username }}');"
                                                                 >Flag as Inappropriate</a>
                                                             {% else %}
-                                                                onclick="flag_as_appropriate({{ post.id }}, '
-                                                                {{ post.community.name }}', '{{ user.username }}
-                                                                ');">Flag as Appropriate</a>
+                                                                onclick="flag_as_appropriate({{ post.id }})">Flag as Appropriate</a>
+
                                                             {% endif %}
                                                         {% endif %}
 
@@ -872,8 +871,8 @@
             })
         };
 
-        var flag_as_appropriate = function (post_id, community_name, user_name) {
-
+        var flag_as_appropriate = function (post_id) {
+            console.log("flag appropriate clicked")
             var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
             $.ajaxSetup({
                 beforeSend: function (xhr, settings) {

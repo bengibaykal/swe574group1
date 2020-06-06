@@ -625,6 +625,7 @@ class FlagPostAsInappropriate(APIView):
     serializer_class = PostSerializer
 
     def post(self, request):
+        print("Inside the inAppropriate")
         flagged = True;
         post = Post.objects.get(id=request.data["post_id"])
         post.flags += 1
