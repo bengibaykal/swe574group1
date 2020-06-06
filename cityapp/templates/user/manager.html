@@ -764,6 +764,55 @@
                 txt = "You pressed Cancel!";
             }
         };
+        
+        function showAnnotations() {
+
+            $(document).ready( function () {
+
+            $.ajax({
+                method: "GET",
+                url: "http://51.116.173.70/api/annotations/list/",
+                success: function (data) {
+                    console.log(data);
+                    var uripage = document.documentURI;
+                    for (var i = 0; i < 10; i++) {
+                        var given = data[i].annotation;
+                        console.log("i" + i);
+                        console.log("note anno  " + given.body.value );
+                        console.log("value  " + given.target.selector.value );
+                        console.log("source  " + given.target.source );
+                        console.log("uripage  " + uripage );
+                        if ( given.target.source.toString() == uripage ){
+                            var divtext = given.target.selector.value;
+                            var id1 =  divtext.split("|")[0].split("'")[1].split("'"[0]);
+                            var text1 = divtext.split("|")[1];
+                            //https://jsfiddle.net/pawmbude/
+                            var text = document.getElementById(id1);
+                            if(text !== undefined && text !== null ){
+                                var searchInput = text1
+                                var regex = new RegExp(text1, 'gi')
+                                text.innerHTML = text.innerText.replace(regex, function(str) {
+                                    return "<span id='spananno' class='" + i + "'" + "style='background-color: lightblue;' onmouseover='description()' onmouseout='outdesc()' >" + str + "</span>"
+                                })
+                                var classy = "." + i
+                                //add invisible
+                                $(classy).append("<span class='description' id='description' style='background-color: lightblue' >"+  data[i].annotation.body.value  +"</span>");
+                            }
+                        }else{}
+                    }
+                }
+            });
+            return false;
+        });
+
+        }
+        function description() {
+            console.log("mouse func")
+        $(".description").show();
+        }
+        function outdesc() {
+        $(".description").hide();
+        }
 
 
         var unfollow_community = function (community_id) {
@@ -795,6 +844,8 @@
             });
             return false;
         };
+        
+        
 
         var unfollow_post = function (post_id) {
             $.ajax({
@@ -842,6 +893,16 @@
         };
 
     </script>
+    <style>
+        .description {
+        display:none;
+        position:absolute;
+        border:2px solid #000;
+        width:200px;
+        height:100px;
+        font-size: medium;
+    }
+    </style>
 
     <script>
 
@@ -907,6 +968,7 @@
         }
 
     </script>
+
 
 
 </body>
