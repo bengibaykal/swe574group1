@@ -381,7 +381,7 @@
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Dropdown -->
                                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                        <h6 class="m-0 font-weight-bold text-primary">{{ post.name }} |
+                                        <h6 class="m-0 font-weight-bold text-primary">Post: {{ post.name }} |
                                             <span style="font-size: 11px;color: #0f0f0f"
                                                   id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
                                             <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
@@ -472,7 +472,7 @@
                                     </div>
                                     <!-- Card Body -->
                                     <div class="card-body" id="{{ post.id }}description">
-                                        {{ post.description }}
+                                        Description: {{ post.description }}
                                     </div>
                                 </div>
 
