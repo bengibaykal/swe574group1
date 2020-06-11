@@ -41,7 +41,9 @@ class IndexTemplateView(APIView):
             self.template_name = "user/manager.html"
             user_communities = Community.objects.filter(joined_users=self.request.user)
             user_communities_ids = [comm.id for comm in user_communities]
-            posts = Post.objects.filter(community_id__in=user_communities_ids).order_by('-created')[:30]
+            # https://stackoverflow.com/questions/32998591/django-count-of-foreign-key-model
+            posts = Post.objects.filter(community_id__in=user_communities_ids).order_by('-created')[:30]\
+                .annotate(number_of_comments=Count("related_post"))
             communities = Community.objects.filter(joined_users=self.request.user)
             following_objects = following(request.user)
             ctype_community = ContentType.objects.get_for_model(Community)
@@ -51,7 +53,8 @@ class IndexTemplateView(APIView):
             print(request.user)
             return Response({"posts": posts, "communities": communities, "user": request.user,
                              "following": following_objects, "ctype_community": ctype_community,
-                             "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate":ctype_posttemplate},
+                             "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate":ctype_posttemplate
+                             },
                             status=status.HTTP_200_OK
                             )
         return Response(
@@ -741,3 +744,72 @@ class DashboardSearch(APIView):
             {'query_post_templates': query_post_templates, "query_posts": query_posts.user,
              "query_communities": query_communities,
              })
+
+
+def PopularItems(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.all()
+
+    # The Most Popular Community, Post Template and Posts
+    popular_communities = Community.objects.annotate(number_of_posts=Count("post")).order_by("-number_of_posts")[:6]
+    popular_post_templates = PostTemplate.objects.annotate(number_of_posts=Count("post_template")).order_by("-number_of_posts")[:4]
+    popular_posts = Post.objects.annotate(number_of_comments=Count("related_post")).order_by("-number_of_comments")[:6]
+
+    print("The Most Popular Communities = " + str(popular_communities))
+    print("The Most Popular Post Templates = " + str(popular_post_templates))
+    print("The Most Popular Posts = " + str(popular_posts))
+
+    # The Most Content Creator User
+    users = CommunityUser.objects.all()
+    the_most_creative_users = []
+    for user in users:
+        created_communities = Community.objects.filter(created_by=user.id)
+        #print("Created Communities = " + str(created_communities))
+        created_community_count = created_communities.count()
+
+        created_posts_templates = PostTemplate.objects.filter(created_by=user.id)
+        #print("Created Post Templates = " + str(created_posts_templates))
+        created_post_template_count = created_posts_templates.count()
+
+        created_posts = Post.objects.filter(created_by=user.id)
+        #print("Created Posts = " + str(created_posts))
+        created_post_count = created_posts.count()
+
+        created_comment = Comment.objects.filter(created_by=user.id)
+        #print("Created Comments = " + str(created_comment))
+        created_comment_count = created_comment.count()
+
+        created_content = created_community_count + created_post_template_count + created_post_count + created_comment_count
+        print("Created Content Count = " + str(created_content))
+        the_most_creative_users.append((user, created_content))
+
+    # https://stackoverflow.com/questions/10695139/sort-a-list-of-tuples-by-2nd-item-integer-value
+    print("List = " + str(the_most_creative_users))
+    print("List Sorted= " + str(sorted(the_most_creative_users, key=lambda x: x[1], reverse=True)))
+
+    the_most_creative_users_completed = sorted(the_most_creative_users,key=lambda x: x[1], reverse=True)[:6]
+
+    following_objects = following(request.user)
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+
+
+    return render(request, 'user/popular_items.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'communities': communities,
+                      'popular_communities': popular_communities,
+                      'popular_post_templates': popular_post_templates,
+                      'popular_posts': popular_posts,
+                      'creative_users': the_most_creative_users_completed,
+                      'following': following_objects,
+                      'ctype_community': ctype_community,
+                      'ctype_posttemplate': ctype_posttemplate,
+                      'ctype_post': ctype_post,
+                      'ctype_user': ctype_user,
+                      'posts': posts,
+                      'user': request.user
+                  }
+                  )

@@ -80,6 +80,12 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link" href="{% url "community:popular_items" %}">
+                <i class="fa fa-fire" aria-hidden="true"></i>
+                <span>Popular Items</span></a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="{% url "community:joined-communities-list" %}">
                 <i class="fas fa-hand-point-right"></i>
                 <span>Joined Communities</span></a>
@@ -392,6 +398,7 @@
                                             <span style="font-size: 11px;color: #0f0f0f"
                                                   id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
                                             <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
+                                            <span><i class="fas fa-comment"></i> {{ post.number_of_comments }}</span>
 
                                         </h6>
                                         <div class="dropdown no-arrow">

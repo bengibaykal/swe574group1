@@ -36,5 +36,6 @@ urlpatterns = [
     path('flag-inappropriate', FlagPostAsInappropriate.as_view(), name="flag-post-inappropriate"),
     path('flag-appropriate', FlagPostAsAppropriate.as_view(), name="flag-post-appropriate"),
     path('user-posts/<int:user_id>', UserCreatedPostsTemplateView.as_view(), name="user-posts"),
+    path('popularitems', PopularItems, name="popular_items"),
 
 ]
