@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
+from actstream.views import respond
 from django.db.models import Count
-from actstream.models import following, Follow, Action
+from actstream.models import following, Action, Follow
+from community import actions
 from community.models import *
 from community.models import *
 from community.serializers import PostSerializer
@@ -21,12 +24,14 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, RetrieveAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
+
+
 
 USER_MODEL = get_user_model()
 
@@ -813,3 +818,21 @@ def PopularItems(request):
                       'user': request.user
                   }
                   )
+# Override From <Actstream View> In Order To Enable <User Stopped Following> Notification
+def follow_unfollow(request, content_type_id, object_id, flag=None, do_follow=True, actor_only=True):
+    """
+    Creates or deletes the follow relationship between ``request.user`` and the
+    actor defined by ``content_type_id``, ``object_id``.
+    """
+    ctype = get_object_or_404(ContentType, pk=content_type_id)
+    instance = get_object_or_404(ctype.model_class(), pk=object_id)
+
+    # If flag was omitted in url, None will pass to flag keyword argument
+    flag = flag or ''
+
+    if do_follow:
+        actions.follow(request.user, instance, actor_only=actor_only, flag=flag)
+        return respond(request, 201)   # CREATED
+
+    actions.unfollow(request.user, instance, flag=flag, send_action=True)
+    return respond(request, 204)   # NO CONTENT

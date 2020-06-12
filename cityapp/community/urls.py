@@ -1,6 +1,8 @@
 from community import feeds
 from community.views import *
+from django.conf.urls import url
 from django.urls import path
+
 
 app_name = 'community'
 
@@ -37,5 +39,19 @@ urlpatterns = [
     path('flag-appropriate', FlagPostAsAppropriate.as_view(), name="flag-post-appropriate"),
     path('user-posts/<int:user_id>', UserCreatedPostsTemplateView.as_view(), name="user-posts"),
     path('popularitems', PopularItems, name="popular_items"),
+    # Override From <Actstream Url> In Order To Enable <User Stopped Following> Notification
+    url(
+        r'^unfollow/(?P<content_type_id>[^/]+)/(?P<object_id>[^/]+)/(?:(?P<flag>[^/]+)/)?$',
+        follow_unfollow,
+        {'do_follow': False},
+        name='unfollow'
+    ),
+    url(
+        r'^unfollow_all/(?P<content_type_id>[^/]+)/(?P<object_id>[^/]+)/(?:(?P<flag>[^/]+)/)?$',
+        follow_unfollow,
+        {'actor_only': False, 'do_follow': False},
+        name='unfollow_all'
+    )
+
 
 ]

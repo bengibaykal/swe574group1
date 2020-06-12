@@ -580,7 +580,7 @@
         var unfollow = function (user_id) {
             $.ajax({
                 method: "GET",
-                url: "/activity/unfollow/{{ ctype_user.pk }}/" + user_id,
+                url: "/unfollow/{{ ctype_user.pk }}/" + user_id,
                 success: function (data) {
                     $("#BigButton").clone().appendTo("#rightDiv");
                     $("#unfollow-success").show();
@@ -832,7 +832,7 @@
         var unfollow_community = function (community_id) {
             $.ajax({
                 method: "GET",
-                url: "/activity/unfollow_all/{{ ctype_community.pk }}/" + community_id,
+                url: "/unfollow_all/{{ ctype_community.pk }}/" + community_id,
                 success: function (data) {
                     $("#BigButton").clone().appendTo("#rightDiv");
                     $("#unfollow-success").show();
@@ -864,7 +864,7 @@
         var unfollow_post = function (post_id) {
             $.ajax({
                 method: "GET",
-                url: "/activity/unfollow_all/{{ ctype_post.pk }}/" + post_id,
+                url: "/unfollow_all/{{ ctype_post.pk }}/" + post_id,
                 success: function (data) {
                     $("#BigButton").clone().appendTo("#rightDiv");
                     $("#unfollow-success").show();
@@ -894,7 +894,7 @@
         var unfollow_posttemplate = function (posttemplate_id) {
             $.ajax({
                 method: "GET",
-                url: "/activity/unfollow_all/{{ ctype_posttemplate.pk }}/" + posttemplate_id,
+                url: "/unfollow_all/{{ ctype_posttemplate.pk }}/" + posttemplate_id,
                 success: function (data) {
                     $("#BigButton").clone().appendTo("#rightDiv");
                     $("#unfollow-success").show();

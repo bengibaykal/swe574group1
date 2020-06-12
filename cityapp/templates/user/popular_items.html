@@ -72,11 +72,11 @@
                                         {% if item.0 not in following %}
                                             <a class="dropdown-item"
                                                href="#"
-                                               onclick="follow({{ item.id }});">Follow User</a>
+                                               onclick="follow({{ item.0.id }});">Follow User</a>
                                         {% else %}
                                             <a class="dropdown-item"
                                                href="#"
-                                               onclick="unfollow({{ item.id }});">Unfollow User</a>
+                                               onclick="unfollow({{ item.0.id }});">Unfollow User</a>
                                         {% endif %}
                                     {% endif %}
                                 </div>
