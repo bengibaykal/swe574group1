@@ -115,7 +115,7 @@ class Post(TimeStamped):
     name = models.CharField(max_length=55, blank=True, null=True)
     created_by = models.ForeignKey(CommunityUser, related_name="post_author", on_delete=models.CASCADE, blank=True,
                                    null=True)
-    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, blank=True, null=True)
     description = models.TextField(max_length=255, blank=True, null=True)
     tags = models.ManyToManyField(Tag, related_name="post_tags")
     post_template = models.ForeignKey(PostTemplate, related_name="post_template", on_delete=models.CASCADE, blank=True,
@@ -153,7 +153,7 @@ class DataFileField(TimeStamped):
 
 
 class Comment(TimeStamped):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="related_post")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="related_post", blank=True, null=True)
     created_by = models.ForeignKey(CommunityUser, on_delete=models.CASCADE, related_name="comment_author",
                                    null=True)
     content = models.TextField(null=True)
