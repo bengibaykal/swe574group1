@@ -9,7 +9,7 @@
         <!-- Page Heading -->
 
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">{{ community.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800">Community: {{ community.name }}</h1>
             {% if is_user_joined %}
                 <div style="float: right">
                     <a class="" href="{% url "community:posts-create" community.id %}">
@@ -27,81 +27,166 @@
         </div>
 
         <div class="row">
-            <div class="col-lg-12 mb-12" style="display: none" id="follow-success">
-                <div class="card bg-success text-white shadow">
-                    <div class="card-body">
-                        User Followed Successfully
-                    </div>
-                </div>
+            <div class="col-lg-12 mb-12">
+
             </div>
-            </br>
-            </br>
-            </br>
-            {% for post in posts %}
-                <div class="col-lg-6">
 
-                    <div class="card shadow mb-4">
-                        <!-- Card Header - Dropdown -->
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">{{ post.name }}</h6>
-                            <div class="dropdown no-arrow">
-                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                     aria-labelledby="dropdownMenuLink">
-                                    <div class="dropdown-header">Action:</div>
-                                    <a class="dropdown-item" href="{% url "community:post-detail" post.id %}">Go to
-                                        Post</a>
-                                    {#                                    <a class="dropdown-item" href="#">Another action</a>#}
-                                    {#                                    <div class="dropdown-divider"></div>#}
-                                    {#                                    <a class="dropdown-item" href="#">Something else here</a>#}
-                                    {% if user.id != post.created_by.id %}
-                                        <div class="dropdown-header">Created By:</div>
-                                        <a class="dropdown-item"
-                                           href="#">{{ post.created_by.username }}</a>
-                                        <a class="dropdown-item"
-                                           href="#">{{ post.created }}</a>
-                                        <div class="dropdown-header">Follow</div>
-                                        {% if user.id != post.created_by.id %}
-                                            <a class="dropdown-item" href="#"
-                                               onclick="follow({{ post.created_by.id }});">Follow {{ post.created_by.username }}</a>
-                                        {% endif %}
-                                    {% endif %}
+            {% if not is_user_joined %}
+                <div class="col-xl-6 col-md-6 mb-6">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <a href="{% url "community:join-community" community.id %}">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">You Are Not
+                                            Allowed To See The Content Yet..
+                                        </div>
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Click Here
+                                            To Join The Community
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                    </div>
                                 </div>
+                            </div>
+                    </div>
 
+                </div>
+
+            {% else %}
+                {% if posts|length == 0 %}
+                    <div class="col-xl-5 col-md-6 mb-6">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">No Content
+                                            Created Yet..
+                                        </div>
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Click To Create Post or Post Type Buttons..
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <!-- Card Body -->
-                        <div class="card-body">
-                            {{ post.description }}
-                        </div>
                     </div>
+                {% else %}
+                    {% for post in posts %}
+                        <div class="col-lg-6">
+                            {% csrf_token %}
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Post: {{ post.name }} |
+                                        <span style="font-size: 11px;color: #0f0f0f"
+                                              id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
+                                        <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
+                                        <span><i class="fas fa-comment"></i> {{ post.number_of_comments }}</span>
 
-                </div>
-            {% endfor %}
+                                    </h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                             aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header"><i class="fas fa-directions"></i>Actions:
+                                            </div>
+                                            <a class="dropdown-item"
+                                               href="{% url "community:post-detail" post.id %}">Go to Post</a>
+
+                                            <a class="dropdown-item"
+                                               href="#"
+                                                    {% if user.is_authenticated %}
+                                                        {% if user not in post.flaggedUsers.all %}
+                                               onclick="flag_as_inappropriate({{ post.id }}, '{{ post.community.name }}', '{{ user.username }}');"
+                                                            >Flag as Inappropriate</a>
+                                                        {% else %}
+                                                            onclick="flag_as_appropriate({{ post.id }})">Flag as
+                                                            Appropriate
+                                                            </a>
+
+                                                        {% endif %}
+                                                    {% endif %}
+
+                                            <!-- Follow Post -->
+                                            {% if post not in following %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="follow_post({{ post.id }});">Follow Post</a>
+                                            {% else %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="unfollow_post({{ post.id }});">Unfollow Post</a>
+                                            {% endif %}
+                                            <a class="dropdown-item"
+                                               href="#"
+                                               onclick="listenAudioVersionOfPost({{ post.id }});">Listen Post</a>
+                                            <!-- Follow User -->
+                                            {% if user.id != post.created_by.id %}
+                                                <div class="dropdown-header">Created
+                                                    By: {{ post.created_by.username }}</div>
+                                                {% if post.created_by not in following %}
+                                                    <a class="dropdown-item"
+                                                       href="#"
+                                                       onclick="follow({{ post.created_by.id }});">Follow User</a>
+                                                {% else %}
+                                                    <a class="dropdown-item"
+                                                       href="#"
+                                                       onclick="unfollow({{ post.created_by.id }});">Unfollow
+                                                        User</a>
+                                                {% endif %}
+                                            {% endif %}
+
+                                            <!-- Follow PostTemplate -->
+                                            <div class="dropdown-header">Post
+                                                Template: {{ post.post_template.name }}</div>
+                                            {% if post.post_template not in following %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="follow_posttemplate({{ post.post_template.id }});">Follow
+                                                    Post Template</a>
+                                            {% else %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="unfollow_posttemplate({{ post.post_template.id }});">Unfollow
+                                                    Post Template</a>
+                                            {% endif %}
+
+                                            <!-- Follow Community -->
+                                            <div class="dropdown-header">Community: {{ post.community.name }}</div>
+                                            {% if post.community not in following %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="follow_community({{ post.community.id }});">Follow
+                                                    Community</a>
+                                            {% else %}
+                                                <a class="dropdown-item"
+                                                   href="#"
+                                                   onclick="unfollow_community({{ post.community.id }});">Unfollow
+                                                    Community</a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body" id="{{ post.id }}description">
+                                    Description: {{ post.description }}
+                                </div>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
         </div>
-
     </div>
-    <script type="text/javascript">
 
-        var follow = function (user_id) {
-            $.ajax({
-                method: "GET",
-                url: "/activity/follow/7/" + user_id,
-                success: function (data) {
-                    $("#follow-success").show();
-                    $("#follow-success").fadeOut(2000);
-                    console.log("success");
-
-                }
-            });
-            return false;
-        };
-
-
-    </script>
 {% endblock %}
 
 </html>

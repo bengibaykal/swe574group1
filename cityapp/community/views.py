@@ -147,12 +147,18 @@ class CommunitiesDetailedTemplateView(APIView):
     template_name = 'user/community.html'
 
     def get(self, request, community_id):
-        posts = Post.objects.filter(community__id=community_id)
+        posts = Post.objects.filter(community__id=community_id).annotate(number_of_comments=Count("related_post"))
         communities = Community.objects.filter(joined_users=self.request.user)
         community = Community.objects.filter(id=community_id).first()
+        following_objects = following(request.user)
+        ctype_community = ContentType.objects.get_for_model(Community)
+        ctype_post = ContentType.objects.get_for_model(Post)
+        ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+        ctype_user = ContentType.objects.get_for_model(USER_MODEL)
         is_user_joined = True if request.user in community.joined_users.all() else False
         return Response({'posts': posts, "user": request.user, "communities": communities, "community": community,
-                         "is_user_joined": is_user_joined})
+                         "is_user_joined": is_user_joined, "following": following_objects,"ctype_community": ctype_community,
+                         "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate": ctype_posttemplate})
 
 
 # todo Refactor
