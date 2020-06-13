@@ -227,6 +227,28 @@
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" >
+                            <input type="button" onclick="myFunction()" value="Check Annotation" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" >
+                            <input type="button" onclick="myFunction2()" value="Create Text Annotation" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" >
+                            <input type="button" onclick="ImageAnnotation()" value="Create Image Annotation" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" >
+                            <input type="button" onclick="showAnnotations()" value="Show Annotations" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        </a>
+                    </li>
 
                     <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                     {#                    <li class="nav-item dropdown no-arrow d-sm-none">#}
@@ -797,6 +819,34 @@
                         console.log("source  " + given.target.source );
                         console.log("uripage  " + uripage );
                         if ( given.target.source.toString() == uripage ){
+                            if(given.target.selector.type == "SvgSelector"){
+
+                                var mediaurl = given.target.selector.value.split("|")[0];
+                                var mediaclass = "." + mediaurl;
+                                var xpos = given.target.selector.value.split("|")[1].split(",")[0];
+                                var ypos = given.target.selector.value.split("|")[1].split(",")[2];
+                                var hei = given.target.selector.value.split("|")[1].split(",")[5];
+                                var wid = given.target.selector.value.split("|")[1].split(",")[4];
+
+                                var boxid = "box" + i;
+                                var boxidpoint = "#" + boxid;
+
+                                $(".wrapper").append("<div class='box' id=" + "'box" + i + "'" + "onmouseover='description()' onmouseout='outdesc()' ></div>");
+                                $(boxidpoint).append("<span class='description' id='description' style='background-color: white' >"+
+                                                        given.body.value  +"</span>");
+
+                                document.getElementById(boxid).style.top = ypos+"px";
+                                document.getElementById(boxid).style.left = xpos+"px";
+                                document.getElementById(boxid).style.width = wid+"px";
+                                document.getElementById(boxid).style.height = hei+"px";
+                                document.getElementById(boxid).style.visibility = "visible";
+                                document.getElementById(boxid).style.position = "absolute";
+
+                                document.getElementsByClassName("jcrop-holder")[0].style.visibility = "hidden";
+                                document.getElementsByClassName("jcrop-tracker")[0].style.visibility = "hidden";
+                           
+
+                            }else {
                             var divtext = given.target.selector.value;
                             var id1 =  divtext.split("|")[0].split("'")[1].split("'"[0]);
                             var text1 = divtext.split("|")[1];
@@ -812,6 +862,7 @@
                                 //add invisible
                                 $(classy).append("<span class='description' id='description' style='background-color: lightblue' >"+  data[i].annotation.body.value  +"</span>");
                             }
+                           }
                         }else{}
                     }
                 }
@@ -982,6 +1033,87 @@
         }
 
     </script>
+<script>
+        function ImageAnnotation(str) {
+
+            var note = prompt("Please enter your note:", "Note1");
+                  if (note == null || note == "") {
+                    txt = "No note will be saved.";
+                  } else {
+                    txt = "Note " + note + "will be saved.";
+                  }
+
+            var imageAnnotateContext = {
+                        "@context": "http://www.w3.org/ns/anno.jsonld",
+                        "type": "Annotation",
+                        "body": {
+                            "type": "Image",
+                            "value": note,
+                            "format": "Image"
+                        },
+                        "target": {
+                            "source": document.documentURI,
+                            "selector": {
+                                "type": "SvgSelector",
+                                "value": this.target.id + "|" + $('#x1').val() + "," + $('#x2').val() + "," + $('#y1').val() + "," + $('#y2').val() + "," + $('#w').val() + "," + $('#h').val() + ",",
+                            }
+                        }
+            };
+
+
+            var r = confirm("Image Annotation to be posted : " + JSON.stringify(imageAnnotateContext));
+
+            if (r == true) {
+
+              console.log("You pressed OK!");
+              //if the selection is approved for annotation:
+                //then save
+                console.log('annotate: ' + JSON.stringify(imageAnnotateContext) );
+                $.ajaxSetup({
+                    beforeSend: function (xhr, settings) {
+                        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                        }
+                    }
+                });
+                $.ajax({
+                    type: "POST",
+                    url: "http://127.0.0.1:8000/api/annotations/create",
+                    data: JSON.stringify({annotation: imageAnnotateContext}),
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    dataType: "json",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    success: function () {
+                        alert("Saved! It worked.");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert("some error " + String(errorThrown) + String(textStatus) + String(XMLHttpRequest.responseText));
+                    }
+                });
+                //save
+              }
+              else {
+              txt = "You pressed Cancel!";
+            }
+
+
+        }
+    </script>
+    <style>
+        .description {
+        display:none;
+        position:relative;
+        border:2px solid #000;
+        width:200px;
+        height:100px;
+        font-size: medium;
+        color : black;
+        background: white;
+    }
+    </style>
 
 
 
