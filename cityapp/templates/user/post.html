@@ -49,6 +49,22 @@
                                 <div class="text-center">
                                     <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;"
                                          src="/media/{{ value.url }}" alt="">
+                                    <div style="visibility : hidden;" class="jc_coords">
+                                            <form id="coords"
+                                                class="coords"
+                                                onsubmit="return false;"
+                                                action="http://example.com/post.php">
+
+                                                <div class="inline-labels">
+                                                <label style="visibility : hidden;" >X1 <input type="text" size="4" id="x1" name="x1" /></label>
+                                                <label style="visibility : hidden;">Y1 <input type="text" size="4" id="y1" name="y1" /></label>
+                                                <label style="visibility : hidden;">X2 <input type="text" size="4" id="x2" name="x2" /></label>
+                                                <label style="visibility : hidden;">Y2 <input type="text" size="4" id="y2" name="y2" /></label>
+                                                <label style="visibility : hidden;">W <input type="text" size="4" id="w" name="w" /></label>
+                                                <label style="visibility : hidden;">H <input type="text" size="4" id="h" name="h" /></label>
+                                                </div>
+                                              </form>
+                                        </div>
                                 </div>
                             </div>
                         </div>
