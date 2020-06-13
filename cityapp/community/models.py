@@ -136,7 +136,7 @@ def save_post(sender, instance, **kwargs):
     action.send(instance.created_by, verb="Has Created A New Post - ", description="New Post",
                 action_object=instance, target=instance.community)
 
-    action.send(instance.created_by, verb="Has Created A New Post Template - ", description="New Post Template",
+    action.send(instance.created_by, verb="Has Created A New Post - ", description="New Post",
                 action_object=instance, target=instance.post_template)
 
 
