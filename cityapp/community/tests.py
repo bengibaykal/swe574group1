@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from actstream.actions import follow, is_following
+from actstream.models import Action
 from community.actions import unfollow
 from community.models import *
 from community_user.models import CommunityUser
@@ -309,3 +310,111 @@ class Follow_Unfollow_TestCase(APITestCase):
         follow_status = is_following(self.follower, self.target_post)
         print("Is Post Still Followed= " + str(follow_status))
         self.assertEqual(False, follow_status)
+
+
+# Test Case For Activity - Action Stream
+class ActionStreamTestCase(APITestCase):
+
+    login_url = reverse("api:login")
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+
+    def setUp(self):
+        self.username_follower = "follower"
+        self.email_follower = "follower@test.com"
+        self.password_follower = "follower"
+        self.follower = CommunityUser.objects.create_user(self.username_follower, self.email_follower, self.password_follower)
+
+        self.username_target = "target"
+        self.email_target = "target@test.com"
+        self.password_target = "target"
+        self.target = CommunityUser.objects.create_user(self.username_target, self.email_target, self.password_target)
+
+        self.username_creator = "creator"
+        self.email_creator = "creator@test.com"
+        self.password_creator = "creator"
+        self.creator = CommunityUser.objects.create_user(self.username_creator, self.email_creator, self.password_creator)
+
+        self.community_name = "community"
+        self.post_template_name = "post_template"
+        self.post_name = "post"
+
+    def test_action_stream_community_creation(self):
+
+        print(" ")
+        print("Test Action Stream After Community Created")
+        print("--------------------------")
+
+        self.community = Community.objects.create(name= self.community_name, created_by=self.creator)
+        self.Action = Action.objects.filter(action_object_object_id=self.community.id). \
+                          filter(action_object_content_type=self.ctype_community). \
+                          filter(actor_object_id=self.creator.id). \
+                          filter(actor_content_type=self.ctype_user).order_by("-timestamp")[:1]
+
+        print(self.Action)
+        action_description = self.Action.values_list("description", flat=True)[0]
+        self.assertEqual(action_description, "New Community") # Check Whether Description is OK
+
+    def test_action_stream_posttemplate_creation(self):
+
+        print(" ")
+        print("Test Action Stream After Post Template Created")
+        print("--------------------------")
+
+        self.community = Community.objects.create(name=self.community_name, created_by=self.creator)
+        self.post_template = PostTemplate.objects.create(name=self.post_template_name, created_by=self.creator,
+                                                                community=self.community)
+
+        self.Action = Action.objects.filter(action_object_object_id=self.post_template.id). \
+                          filter(action_object_content_type=self.ctype_posttemplate). \
+                          filter(actor_object_id=self.creator.id). \
+                          filter(actor_content_type=self.ctype_user).order_by("-timestamp")[:1]
+
+
+        print(self.Action)
+        action_description = self.Action.values_list("description", flat=True)[0]
+        self.assertEqual(action_description, "New Post Template") # Check Whether Description is OK
+
+    def test_action_stream_post_creation(self):
+
+        print(" ")
+        print("Test Action Stream After Post Created")
+        print("--------------------------")
+
+        self.community = Community.objects.create(name=self.community_name, created_by=self.creator)
+
+        self.post_template = PostTemplate.objects.create(name=self.post_template_name, created_by=self.creator,
+                                                         community=self.community)
+
+        self.post = Post.objects.create(name= self.post_name, created_by=self.creator,
+                                        community= self.community, post_template= self.post_template)
+
+
+        self.Action = Action.objects.filter(action_object_object_id=self.post.id). \
+                          filter(action_object_content_type=self.ctype_post). \
+                          filter(actor_object_id=self.creator.id). \
+                          filter(actor_content_type=self.ctype_user).order_by("-timestamp")
+
+        print(len(self.Action))
+        print(self.Action[0])
+        print(self.Action[1])
+
+        # 2 Stream Should Return, 1 For Post Template, 1 For Community
+        self.assertEqual(len(self.Action), 2)
+
+        # Both Should Have "New Post" as Description
+        action_description_0 = self.Action.values_list("description", flat=True)[0]
+        action_description_1 = self.Action.values_list("description", flat=True)[1]
+
+        # Action_Target_0 Should Return "PostTemplate" and Action_Target_1 Should Return "Community" as Target
+        action_target_0 = self.Action.values_list("target_content_type_id", flat=True)[0]
+        action_target_1 = self.Action.values_list("target_content_type_id", flat=True)[1]
+
+        self.assertEqual(action_target_0, self.ctype_posttemplate.id)
+        self.assertEqual(action_target_1, self.ctype_community.id)
+        self.assertEqual(action_description_0, "New Post")
+        self.assertEqual(action_description_1, "New Post")
+
+
