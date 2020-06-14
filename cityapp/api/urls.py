@@ -1,5 +1,6 @@
 from api.community_view import *
 from api.user_views import *
+from api.city_view import *
 from django.urls import path
 from rest_framework_swagger.views import get_swagger_view
 
@@ -27,5 +28,6 @@ urlpatterns = [
 
     path('comment/delete/<pk>/', CommentDeleteAPIView.as_view(), name="comment-delete"),
     path('comment/update/<pk>/', CommentUpdateAPIView.as_view(), name="comment-update"),
+    path('search-city/', GetCityInformation.as_view(), name="search-city"),
 
 ]
