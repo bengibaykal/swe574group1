@@ -48,6 +48,7 @@
                             <div class="card-body">
                                 <div class="text-center">
                                     <div style="margin: 20px 0 20px 0">
+                                     <div class="wrapper">
                                     <img id="target" class="/media/{{ value.url }}" style="width: 25rem;"
                                          src="/media/{{ value.url }}" alt="">
                                     <div style="visibility : hidden;" class="jc_coords">
@@ -67,11 +68,13 @@
                                               </form>
                                         </div>
                                         </div>
+                                      </div>
                                 </div>
                             </div>
                         </div>
 
                     </div>
+                    
                 {% elif value|make_list|slice:'1'|join:'' == "*" %}
                     <div class="col-lg-6">
                         <div class="card shadow mb-4">
