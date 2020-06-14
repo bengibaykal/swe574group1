@@ -38,6 +38,20 @@
     <link href="http://edge1u.tapmodo.com/deepliq/jcrop_demos.css" rel="stylesheet" type="text/css">
     <script src="http://jcrop-cdn.tapmodo.com/v0.9.12/js/jquery.Jcrop.min.js"></script>
     <script src="http://edge1v.tapmodo.com/deepliq/jcrop_demos.js"></script>
+    <script>
+  (function (u, s, e, r, g) {
+      u[r] = u[r] || [];
+      u[r].push({
+        'ug.start': new Date().getTime(), event: 'embed.js',
+      });
+      var f = s.getElementsByTagName(e)[0],
+          j = s.createElement(e);
+      j.async = true;
+      j.src = 'https://static.userguiding.com/media/user-guiding-'
+       + g + '-embedded.js';
+      f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'userGuidingLayer', '211022072ID');
+</script>
     {% block head_css %}
     {% endblock %}
 </head>
