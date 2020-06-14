@@ -10,7 +10,7 @@ class City(models.Model):
     name = models.CharField(max_length=55, unique=True)
     country_name = models.CharField(max_length=55)
     geolocation = models.CharField(max_length=55)
-    image = models.ImageField(upload_to='media/city')
+    image = models.ImageField(upload_to='media/city', null=True, blank=True)
     creation_date = models.DateTimeField(editable=False)
     modification_date = models.DateTimeField(editable=False)
 
@@ -25,9 +25,8 @@ class City(models.Model):
         self.modification_date = timezone.now()
         return super(City, self).save(*args, **kwargs)
 
+# def save_city(sender, instance, **kwargs):
+# to do --> action send
 
-#def save_city(sender, instance, **kwargs):
-    # to do --> action send
 
-
-#post_save.connect(save_city, sender=City)
+# post_save.connect(save_city, sender=City)

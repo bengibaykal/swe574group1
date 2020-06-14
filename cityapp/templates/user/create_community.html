@@ -2,13 +2,26 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
+{% block head_css %}
+    <style>
+        .h-100 {
+            height: auto !important;
+        }
+
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+            display: none;
+        }
+    </style>
+{% endblock %}
 
 
 {% block wrapper %}
     <div class="row">
-            <div id="comm_alert" class="alert alert-danger col-xl-12 col-md-12" role="alert" style="display: none;">
-                A community with the same name already exists
-            </div>
+        <div id="comm_alert" class="alert alert-danger col-xl-12 col-md-12" role="alert" style="display: none;">
+            A community with the same name already exists
+        </div>
     </div>
     <div class="row">
         {% csrf_token %}
@@ -27,9 +40,22 @@
                            id="data_type_description"
                            aria-describedby="nameHelp" placeholder="Enter description">
                     <br>
-                    <h5 class="mb-0 text-gray-800">Belongs to city</h5>
-                    <select id="locality-dropdown" name="locality"></select>
-                    <br>
+                    <h5 class="mb-0 text-gray-800">City</h5>
+                    <div style="margin: 20px 0 20px 0">
+                        <input name="city_name" type="name"
+                               class="form-control form-control-user col-md-4 col-lg-4 col-xl-4"
+                               id="city_name"
+                               aria-describedby="city_name" placeholder="Search City">
+                        <button onclick="search_city();">Search</button>
+                    </div>
+                    <div class="col-lg-12">
+                        <div id="map"></div>
+                        <input id="city_info" value="" style="display: none" readonly>
+                        <input id="city_image" value="" style="display: none" readonly>
+                        <input id="city_lat" value="" style="display: none" readonly>
+                        <input id="city_lng" value="" style="display: none" readonly>
+                    </div>
+
                     <div style="margin: 20px 0 20px 0">
                         <h5 class="mb-0 text-gray-800">Tags</h5>
                         <select id="myTags" size="8" style="width: 100%;"></select>
@@ -44,7 +70,7 @@
                             Remove Tag
                         </button>
                     </div>
-                     <button class="btn-success" style="border-radius: 6px;width: 83px;height: 40px;"
+                    <button class="btn-success" style="border-radius: 6px;width: 83px;height: 40px;"
                             onclick="send_json();">
                         Save
                     </button>
@@ -52,7 +78,28 @@
             </div>
         </div>
     </div>
+    <script>
+        function initMap(lat, lng) {
 
+            var location = {lat: lat, lng: lng,};
+
+            var map = new google.maps.Map(
+                document.getElementById('map'), {zoom: 1, center: location});
+
+            console.log(lat, lng);
+            new google.maps.Marker({
+                position: {
+                    lat: lat,
+                    lng: lng
+                }, map: map
+            });
+
+
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDX0K8j8RSzk2VyXi3Eks1cy-muY2FmD50">
+    </script>
     <script>
 
         //Filling dropdown by the names of cities
@@ -61,18 +108,18 @@
         dropdown.append('<option selected="true" disabled>Choose City of Community</option>');
         dropdown.prop('selectedIndex', 0);
         $.ajax({
-                method: "GET",
-                url: "{% url "city:all-cities" %}",
-                success: function (data) {
-                    var cities = data["cities"];
-                    var obj = JSON.parse(cities)
-                    var arrayLength = obj.length;
-                    for (var i = 0; i < arrayLength; i++) {
-                        var city = obj[i].fields.name
-                        dropdown.append($('<option></option>').attr('value', city).text(city));
-                    }
-                   console.log(obj);
-                },
+            method: "GET",
+            url: "{% url "city:all-cities" %}",
+            success: function (data) {
+                var cities = data["cities"];
+                var obj = JSON.parse(cities)
+                var arrayLength = obj.length;
+                for (var i = 0; i < arrayLength; i++) {
+                    var city = obj[i].fields.name
+                    dropdown.append($('<option></option>').attr('value', city).text(city));
+                }
+                console.log(obj);
+            },
         });
 
         function csrfSafeMethod(method) {
@@ -86,9 +133,14 @@
                 tags.push($(this).val());
             });
             console.log(tags);
+            var city_lng = $("#city_lng").val();
+            var city_lat = $("#city_lat").val();
+            var city_image = $("#city_image").val();
+
             var name = $("#community_name").val();
             var description = $("#data_type_description").val();
             var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+
             $.ajaxSetup({
                 beforeSend: function (xhr, settings) {
                     if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -96,26 +148,30 @@
                     }
                 }
             });
-            var selectedCity = document.getElementById("locality-dropdown").value
-            if(selectedCity != "Choose City of Community"){
-                $.ajax({
+            var selectedCity = $("#city_info").val()
+
+            $.ajax({
                 method: "POST",
                 url: "{% url "community:communities-create" %}",
-                data: {tag: tags, name, description, selectedCity},
+                data: {
+                    tag: tags,
+                    lng: city_lng,
+                    lat: city_lat,
+                    image: city_image,
+                    name,
+                    description,
+                    selectedCity
+                },
                 success: function (data) {
                     var community_id = data["community_id"];
-                    if(community_id) {
+                    if (community_id) {
                         window.location = "/communities/" + community_id;
-                    }
-                    else{
+                    } else {
                         $("#comm_alert").show();
                     }
                 },
             })
-            }
-            else{
-                alert("City Selection is required field, please select the city of community")
-            }
+
         };
 
         $('#community_name').on('keyup', function () {
@@ -156,6 +212,37 @@
             value of basic and remove the option*/
             $('#myTags option:selected').remove();
         }
+
+        var search_city = function () {
+            var city = $("#city_name").val();
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            $.ajax({
+                method: "POST",
+                url: "{% url "api:search-city" %}",
+                data: {city: city},
+                success: function (data) {
+                    $("#map").show();
+                    initMap(data.message.candidates[0].geometry.location.lat, data.message.candidates[0].geometry.location.lng);
+
+                    $("#city_lat").val(data.message.candidates[0].geometry.location.lat);
+                    $("#city_lng").val(data.message.candidates[0].geometry.location.lng);
+                    $("#city_image").val("data:image/jpeg;base64,/9j/4gIcSUNDX1BST0Z");
+                    $("#city_info").val(data.message.candidates[0].formatted_address);
+                    $("#city_info").show();
+                    console.log(data.message);
+
+                },
+            })
+
+        };
 
     </script>
 {% endblock %}

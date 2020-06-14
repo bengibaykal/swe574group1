@@ -30,10 +30,19 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
-
-
+import base64
+from django.core.files.base import ContentFile
 
 USER_MODEL = get_user_model()
+
+
+# Format for Uploading an image
+def base64_file(data, name=None):
+    _format, _img_str = data.split(';base64,')
+    _name, ext = _format.split('/')
+    if not name:
+        name = _name.split(":")[-1]
+    return ContentFile(base64.b64decode(_img_str), name='{}.{}'.format(name, ext))
 
 
 class IndexTemplateView(APIView):
@@ -47,7 +56,7 @@ class IndexTemplateView(APIView):
             user_communities = Community.objects.filter(joined_users=self.request.user)
             user_communities_ids = [comm.id for comm in user_communities]
             # https://stackoverflow.com/questions/32998591/django-count-of-foreign-key-model
-            posts = Post.objects.filter(community_id__in=user_communities_ids).order_by('-created')[:30]\
+            posts = Post.objects.filter(community_id__in=user_communities_ids).order_by('-created')[:30] \
                 .annotate(number_of_comments=Count("related_post"))
             communities = Community.objects.filter(joined_users=self.request.user)
             following_objects = following(request.user)
@@ -58,7 +67,8 @@ class IndexTemplateView(APIView):
             print(request.user)
             return Response({"posts": posts, "communities": communities, "user": request.user,
                              "following": following_objects, "ctype_community": ctype_community,
-                             "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate":ctype_posttemplate
+                             "ctype_post": ctype_post, "ctype_user": ctype_user,
+                             "ctype_posttemplate": ctype_posttemplate
                              },
                             status=status.HTTP_200_OK
                             )
@@ -157,7 +167,8 @@ class CommunitiesDetailedTemplateView(APIView):
         ctype_user = ContentType.objects.get_for_model(USER_MODEL)
         is_user_joined = True if request.user in community.joined_users.all() else False
         return Response({'posts': posts, "user": request.user, "communities": communities, "community": community,
-                         "is_user_joined": is_user_joined, "following": following_objects,"ctype_community": ctype_community,
+                         "is_user_joined": is_user_joined, "following": following_objects,
+                         "ctype_community": ctype_community,
                          "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate": ctype_posttemplate})
 
 
@@ -183,7 +194,16 @@ class CreateCommunityTemplateView(APIView):
         name = request.data["name"]
         description = request.data["description"]
         city = request.data["selectedCity"]
-        city_ToSend = City.objects.get(name=city)
+        city_name = city.split(",")[0]
+        country_name = city.split(",")[1]
+        lat = request.data["lat"]
+        lng = request.data["lng"]
+        geolocation = lat + "," + lng
+
+        city_ToSend = City.objects.filter(name=city_name).first()
+
+        if not city_ToSend:
+            city_ToSend = City.objects.create(name=city_name, country_name=country_name, geolocation=geolocation, created_by=request.user)
 
         try:
             community = Community.objects.create(name=name, description=description, created_by=request.user,
@@ -763,7 +783,8 @@ def PopularItems(request):
 
     # The Most Popular Community, Post Template and Posts
     popular_communities = Community.objects.annotate(number_of_posts=Count("post")).order_by("-number_of_posts")[:6]
-    popular_post_templates = PostTemplate.objects.annotate(number_of_posts=Count("post_template")).order_by("-number_of_posts")[:4]
+    popular_post_templates = PostTemplate.objects.annotate(number_of_posts=Count("post_template")).order_by(
+        "-number_of_posts")[:4]
     popular_posts = Post.objects.annotate(number_of_comments=Count("related_post")).order_by("-number_of_comments")[:6]
 
     print("The Most Popular Communities = " + str(popular_communities))
@@ -775,19 +796,19 @@ def PopularItems(request):
     the_most_creative_users = []
     for user in users:
         created_communities = Community.objects.filter(created_by=user.id)
-        #print("Created Communities = " + str(created_communities))
+        # print("Created Communities = " + str(created_communities))
         created_community_count = created_communities.count()
 
         created_posts_templates = PostTemplate.objects.filter(created_by=user.id)
-        #print("Created Post Templates = " + str(created_posts_templates))
+        # print("Created Post Templates = " + str(created_posts_templates))
         created_post_template_count = created_posts_templates.count()
 
         created_posts = Post.objects.filter(created_by=user.id)
-        #print("Created Posts = " + str(created_posts))
+        # print("Created Posts = " + str(created_posts))
         created_post_count = created_posts.count()
 
         created_comment = Comment.objects.filter(created_by=user.id)
-        #print("Created Comments = " + str(created_comment))
+        # print("Created Comments = " + str(created_comment))
         created_comment_count = created_comment.count()
 
         created_content = created_community_count + created_post_template_count + created_post_count + created_comment_count
@@ -798,14 +819,13 @@ def PopularItems(request):
     print("List = " + str(the_most_creative_users))
     print("List Sorted= " + str(sorted(the_most_creative_users, key=lambda x: x[1], reverse=True)))
 
-    the_most_creative_users_completed = sorted(the_most_creative_users,key=lambda x: x[1], reverse=True)[:6]
+    the_most_creative_users_completed = sorted(the_most_creative_users, key=lambda x: x[1], reverse=True)[:6]
 
     following_objects = following(request.user)
     ctype_community = ContentType.objects.get_for_model(Community)
     ctype_post = ContentType.objects.get_for_model(Post)
     ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
     ctype_user = ContentType.objects.get_for_model(USER_MODEL)
-
 
     return render(request, 'user/popular_items.html',
                   context={
@@ -824,6 +844,8 @@ def PopularItems(request):
                       'user': request.user
                   }
                   )
+
+
 # Override From <Actstream View> In Order To Enable <User Stopped Following> Notification
 def follow_unfollow(request, content_type_id, object_id, flag=None, do_follow=True, actor_only=True):
     """
@@ -838,7 +860,7 @@ def follow_unfollow(request, content_type_id, object_id, flag=None, do_follow=Tr
 
     if do_follow:
         actions.follow(request.user, instance, actor_only=actor_only, flag=flag)
-        return respond(request, 201)   # CREATED
+        return respond(request, 201)  # CREATED
 
     actions.unfollow(request.user, instance, flag=flag, send_action=True)
-    return respond(request, 204)   # NO CONTENT
+    return respond(request, 204)  # NO CONTENT

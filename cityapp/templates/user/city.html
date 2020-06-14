@@ -3,14 +3,14 @@
 <!DOCTYPE html>
 <html lang="en">
 {% block wrapper %}
-    <div class="container-fluid" style="background: {{ city.image.url }}">
+    <div class="container-fluid" >
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
 
             <h3 class="h3 mb-0 text-gray-800">{{ city.name }} | <span
                     style="color: #4e73df">{{ city.country_name }}</span></h3>
         </div>
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <span><img style="width:260px;height:150px;" src={{ city.image.url }}></span>
+
         </div>
         <!-- Masthead -->
         <div class="col-md-10 col-lg-10 col-xl-10 mx-auto">
