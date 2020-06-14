@@ -203,7 +203,8 @@ class CreateCommunityTemplateView(APIView):
         city_ToSend = City.objects.filter(name=city_name).first()
 
         if not city_ToSend:
-            city_ToSend = City.objects.create(name=city_name, country_name=country_name, geolocation=geolocation, created_by=request.user)
+            city_ToSend = City.objects.create(name=city_name, country_name=country_name, geolocation=geolocation,
+                                              created_by=request.user)
 
         try:
             community = Community.objects.create(name=name, description=description, created_by=request.user,
@@ -864,3 +865,13 @@ def follow_unfollow(request, content_type_id, object_id, flag=None, do_follow=Tr
 
     actions.unfollow(request.user, instance, flag=flag, send_action=True)
     return respond(request, 204)  # NO CONTENT
+
+
+class GoogleVerify(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'google587629e753de506e.html'
+
+    def get(self, request):
+        return Response(
+            status=status.HTTP_200_OK
+        )

@@ -39,6 +39,8 @@ urlpatterns = [
     path('flag-appropriate', FlagPostAsAppropriate.as_view(), name="flag-post-appropriate"),
     path('user-posts/<int:user_id>', UserCreatedPostsTemplateView.as_view(), name="user-posts"),
     path('popularitems', PopularItems, name="popular_items"),
+
+    path('google587629e753de506e.html', GoogleVerify.as_view(), name="google-verify"),
     # Override From <Actstream Url> In Order To Enable <User Stopped Following> Notification
     url(
         r'^unfollow/(?P<content_type_id>[^/]+)/(?P<object_id>[^/]+)/(?:(?P<flag>[^/]+)/)?$',
