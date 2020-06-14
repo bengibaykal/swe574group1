@@ -18,6 +18,15 @@
                     <a class="" href="{% url "community:data-type-create" community.id %}">
                         <i class="fas fa-fw fa-plus"></i>
                         <span>Create Object Type</span></a>
+                    {% if community not in following %}
+                    <a class="" href="#" onclick="follow_community({{ community.id }});">
+                        <i class="fa fa-heart" ></i>
+                        <span>Follow</span></a>
+                    {% else %}
+                    <a class="" href="#" onclick="unfollow_community({{ community.id }});">
+                        <i class="fa fa-minus-circle"></i>
+                        <span>Unfollow</span></a>
+                    {% endif %}
                 </div>
             {% else %}
                 <a class="button" href="{% url "community:join-community" community.id %}">
