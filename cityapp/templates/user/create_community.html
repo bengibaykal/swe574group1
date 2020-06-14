@@ -230,6 +230,7 @@
                 data: {city: city},
                 success: function (data) {
                     $("#map").show();
+                    console.log(data.message);
                     initMap(data.message.candidates[0].geometry.location.lat, data.message.candidates[0].geometry.location.lng);
 
                     $("#city_lat").val(data.message.candidates[0].geometry.location.lat);
@@ -237,7 +238,7 @@
                     $("#city_image").val("data:image/jpeg;base64,/9j/4gIcSUNDX1BST0Z");
                     $("#city_info").val(data.message.candidates[0].formatted_address);
                     $("#city_info").show();
-                    console.log(data.message);
+
 
                 },
             })
