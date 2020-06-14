@@ -53,7 +53,7 @@
             </br>
             </br>
             {% if following_users|length == 0 %}
-                <div class="col-xl-auto col-md-auto mb-auto">
+                <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-info shadow h-100 py-2">
                         <a href="{% url "community:popular_items" %}">
                         <div class="card-body">
@@ -71,9 +71,10 @@
                 </div>
             {% else %}
             {% for item in following_users %}
-                <div class="col-lg-auto">
+                <div class="col-lg-6">
                     {% csrf_token %}
                     <div class="card shadow mb-auto">
+                    <div class="card shadow mb-4">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">{{ item.username }}</h6>
@@ -153,9 +154,9 @@
                 </div>
             {% else %}
             {% for item in following_communities %}
-                <div class="col-lg-auto">
+                <div class="col-lg-6">
                     {% csrf_token %}
-                    <div class="card shadow mb-auto">
+                    <div class="card shadow mb-4">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">{{ item.name }}</h6>
@@ -236,9 +237,9 @@
                 </div>
             {% else %}
             {% for item in following_posts %}
-                <div class="col-lg-auto">
+                <div class="col-lg-6">
                     {% csrf_token %}
-                    <div class="card shadow mb-auto">
+                    <div class="card shadow mb-4">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">{{ item.name }}</h6>
@@ -320,9 +321,9 @@
                 </div>
             {% else %}
             {% for item in following_post_templates %}
-                <div class="col-lg-auto">
+                <div class="col-lg-6">
                     {% csrf_token %}
-                    <div class="card shadow mb-auto">
+                    <div class="card shadow mb-4">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">{{ item.name }}</h6>

@@ -560,10 +560,10 @@ def followings(request):
     posts = Post.objects.filter(created_by=request.user)
 
     # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
-    following_communities = following(request.user, Community)[:5]
-    following_post_templates = following(request.user, PostTemplate)[:5]
-    following_posts = following(request.user, Post)[:5]
-    following_users = following(request.user, CommunityUser)[:5]
+    following_communities = following(request.user, Community)[:4]
+    following_post_templates = following(request.user, PostTemplate)[:4]
+    following_posts = following(request.user, Post)[:4]
+    following_users = following(request.user, CommunityUser)[:4]
 
     print(following_communities)
     print(following_post_templates)
