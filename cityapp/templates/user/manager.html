@@ -796,6 +796,7 @@
                     console.log(data);
                     var uripage = document.documentURI;
                     for (var i = 0; i < 100; i++) {
+                        if (data[i].annotation != "undefined"){
                         var given = data[i].annotation;
                         console.log("i" + i);
                         console.log("note anno  " + given.body.value );
@@ -849,6 +850,7 @@
                            }
                         }else{}
                     }
+                }
                 }
             });
             return false;
