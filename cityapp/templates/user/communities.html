@@ -11,9 +11,11 @@
                 <th>Community Name</th>
                 <th>Tags</th>
                 <th>#Users</th>
-                <th>Created By</th>
+                <th>#Posts</th>
                 <th>Join</th>
+                <th>Follow</th>
                 <th>City</th>
+                <th>Created By</th>
 
             </tr>
             </thead>
@@ -23,13 +25,23 @@
                     <td><a href="{% url "community:community-detail" comm.id %}">{{ comm.name }}</a></td>
                     <td>{% for tag in comm.tags.all %}{{ tag.name }} {% endfor %}</td>
                     <td>{{ comm.joined_users.count }}</td>
-                    <td>{{ comm.created_by.username }}</td>
-                {% if user not in comm.joined_users.all %}
-                     <td><a class="button" href="{% url "community:join-community" comm.id %}">Join</a></td>
+                    <td>{{ comm.post_count }}</td>
+                    {% if user not in comm.joined_users.all %}
+                        <td><a class="button" href="{% url "community:join-community" comm.id %}">Join</a></td>
                     {% else %}
-                    <td>Joined</td>
-                {% endif %}
+                        <td>Joined</td>
+                    {% endif %}
+                    {% if comm not in following %}
+                        <td><a class="button"
+                           href="#"
+                           onclick="follow_community({{ comm.id }});">Follow</a></td>
+                    {% else %}
+                        <td><a class="button"
+                           href="#"
+                           onclick="unfollow_community({{ comm.id }});">Unfollow</a></td>
+                    {% endif %}
                     <td>{{ comm.city_id }}</td>
+                    <td>{{ comm.created_by.username }}</td>
                 </tr>
             {% endfor %}
             </tbody>

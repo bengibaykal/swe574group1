@@ -146,8 +146,17 @@ class UserCommunitiesListTemplateView(APIView):
 
     def get(self, request):
         communities = Community.objects.filter(joined_users=self.request.user)
-        queryset = Community.objects.all()
-        return Response({'comms': queryset, "user": request.user, "communities": communities})
+        queryset = Community.objects.all().annotate(post_count=Count("post"))
+        following_objects = following(request.user)
+        ctype_community = ContentType.objects.get_for_model(Community)
+        ctype_post = ContentType.objects.get_for_model(Post)
+        ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+        ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+        return Response({'comms': queryset, "user": request.user, "communities": communities,
+                         "following": following_objects, "ctype_community": ctype_community,
+                         "ctype_post": ctype_post, "ctype_user": ctype_user,
+                         "ctype_posttemplate": ctype_posttemplate
+                         })
 
 
 # todo Refactor
