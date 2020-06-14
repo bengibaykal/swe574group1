@@ -22,7 +22,7 @@
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h1 mb-0 text-gray-800">The Things You Should Follow !</h1>
+            <h1 class="h1 mb-0 text-gray-800">You Should Definitely Follow !</h1>
         </div>
         <div class="d-sm-flex align-items-center">
             <h1 class="h4 mb-0 text-gray-800">The Most Creative Users</h1>
@@ -138,18 +138,18 @@
                                      aria-labelledby="dropdownMenuLink">
                                     <div class="dropdown-header">Created By: {{ item.created_by }}</div>
                                     <!-- Follow Community -->
-                                    {% if user != item.created_by %}
-                                        <div class="dropdown-header"></i>Actions:</div>
-                                        {% if item not in following %}
-                                            <a class="dropdown-item"
-                                               href="#"
-                                               onclick="follow_community({{ item.id }});">Follow Community</a>
-                                        {% else %}
-                                            <a class="dropdown-item"
-                                               href="#"
-                                               onclick="unfollow_community({{ item.id }});">Unfollow Community</a>
-                                        {% endif %}
+
+                                    <div class="dropdown-header"></i>Actions:</div>
+                                    {% if item not in following %}
+                                        <a class="dropdown-item"
+                                           href="#"
+                                           onclick="follow_community({{ item.id }});">Follow Community</a>
+                                    {% else %}
+                                        <a class="dropdown-item"
+                                           href="#"
+                                           onclick="unfollow_community({{ item.id }});">Unfollow Community</a>
                                     {% endif %}
+
                                 </div>
                             </div>
                         </div>
@@ -209,19 +209,19 @@
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                                      aria-labelledby="dropdownMenuLink">
                                     <div class="dropdown-header">Created By: {{ item.created_by }}</div>
-                                    <!-- Follow Community -->
-                                    {% if user != item.created_by %}
-                                        <div class="dropdown-header"></i>Actions:</div>
-                                        {% if item not in following %}
-                                            <a class="dropdown-item"
-                                               href="#"
-                                               onclick="follow_post({{ item.id }});">Follow Post</a>
-                                        {% else %}
-                                            <a class="dropdown-item"
-                                               href="#"
-                                               onclick="unfollow_post({{ item.id }});">Unfollow Post</a>
-                                        {% endif %}
+                                    <!-- Follow Post -->
+
+                                    <div class="dropdown-header"></i>Actions:</div>
+                                    {% if item not in following %}
+                                        <a class="dropdown-item"
+                                           href="#"
+                                           onclick="follow_post({{ item.id }});">Follow Post</a>
+                                    {% else %}
+                                        <a class="dropdown-item"
+                                           href="#"
+                                           onclick="unfollow_post({{ item.id }});">Unfollow Post</a>
                                     {% endif %}
+
                                 </div>
                             </div>
                         </div>
@@ -280,19 +280,19 @@
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                                      aria-labelledby="dropdownMenuLink">
                                     <div class="dropdown-header">Created By: {{ item.created_by }}</div>
-                                    <!-- Follow Community -->
-                                    {% if user != item.created_by %}
-                                        <div class="dropdown-header"></i>Actions:</div>
-                                        {% if item not in following %}
-                                            <a class="dropdown-item"
-                                               href="#"
-                                               onclick="follow_posttemplate({{ item.id }});">Follow Post Template</a>
-                                        {% else %}
-                                            <a class="dropdown-item"
-                                               href="#"
-                                               onclick="unfollow_posttemplate({{ item.id }});">Unfollow Post Template</a>
-                                        {% endif %}
+                                    <!-- Follow Post Template -->
+
+                                    <div class="dropdown-header"></i>Actions:</div>
+                                    {% if item not in following %}
+                                        <a class="dropdown-item"
+                                           href="#"
+                                           onclick="follow_posttemplate({{ item.id }});">Follow Post Template</a>
+                                    {% else %}
+                                        <a class="dropdown-item"
+                                           href="#"
+                                           onclick="unfollow_posttemplate({{ item.id }});">Unfollow Post Template</a>
                                     {% endif %}
+
                                 </div>
                             </div>
                         </div>

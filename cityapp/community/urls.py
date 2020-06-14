@@ -33,6 +33,7 @@ urlpatterns = [
     path('followings/user/', followings_user, name='followings_user_all'),
     path('followings/community/', followings_community, name='followings_community_all'),
     path('followings/post/', followings_post, name='followings_post_all'),
+    path('followings/posttemplate/', followings_post_template, name='followings_posttemplate_all'),
     path('followers/', followers, name='followers'),
     path('get-all-users', GetAllUsersTemplateView.as_view(), name="get-all-users"),
     path('flag-inappropriate', FlagPostAsInappropriate.as_view(), name="flag-post-inappropriate"),

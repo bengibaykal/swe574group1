@@ -551,23 +551,35 @@ def followings(request):
     posts = Post.objects.filter(created_by=request.user)
 
     # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
-    following_communities = following(request.user, Community)[:8]
-    following_posts = following(request.user, Post)[:8]
-    following_users = following(request.user, CommunityUser)[:8]
+    following_communities = following(request.user, Community)[:5]
+    following_post_templates = following(request.user, PostTemplate)[:5]
+    following_posts = following(request.user, Post)[:5]
+    following_users = following(request.user, CommunityUser)[:5]
 
     print(following_communities)
+    print(following_post_templates)
     print(following_posts)
     print(following_users)
 
-    return render(request, 'user/followings.html',
+    following_objects = following(request.user)
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+
+    return render(request, 'user/following_v2.html',
                   context={
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
-                      'actor': request.user,
+                      'user': request.user,
                       'following_users': following_users,
                       'following_communities': following_communities,
+                      'following_post_templates': following_post_templates,
                       'following_posts': following_posts,
                       'communities': communities,
-                      'posts': posts
+                      'posts': posts,
+                      "following": following_objects,
+                      "ctype_community": ctype_community,
+                      "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate": ctype_posttemplate
                   }
                   )
 
@@ -577,17 +589,32 @@ def followings_user(request):
     posts = Post.objects.filter(created_by=request.user)
 
     # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
-    following_users = following(request.user, CommunityUser)[:50]
+    following_communities = following(request.user, Community)[:5]
+    following_post_templates = following(request.user, PostTemplate)[:5]
+    following_posts = following(request.user, Post)[:50]
+    following_users = following(request.user, CommunityUser)[:5]
 
+    print(following_communities)
+    print(following_post_templates)
+    print(following_posts)
     print(following_users)
 
-    return render(request, 'user/followings_user.html',
+    following_objects = following(request.user)
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+
+    return render(request, 'user/following_user_v2.html',
                   context={
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
-                      'actor': request.user,
+                      'user': request.user,
                       'following_users': following_users,
                       'communities': communities,
-                      'posts': posts
+                      'posts': posts,
+                      "following": following_objects,
+                      "ctype_community": ctype_community,
+                      "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate": ctype_posttemplate
                   }
                   )
 
@@ -598,16 +625,32 @@ def followings_community(request):
 
     # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
     following_communities = following(request.user, Community)[:50]
+    following_post_templates = following(request.user, PostTemplate)[:5]
+    following_posts = following(request.user, Post)[:5]
+    following_users = following(request.user, CommunityUser)[:5]
 
     print(following_communities)
+    print(following_post_templates)
+    print(following_posts)
+    print(following_users)
 
-    return render(request, 'user/followings_community.html',
+    following_objects = following(request.user)
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+
+    return render(request, 'user/following_community_v2.html',
                   context={
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
-                      'actor': request.user,
+                      'user': request.user,
+                      'following_users': following_users,
                       'following_communities': following_communities,
                       'communities': communities,
-                      'posts': posts
+                      'posts': posts,
+                      "following": following_objects,
+                      "ctype_community": ctype_community,
+                      "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate": ctype_posttemplate
                   }
                   )
 
@@ -617,17 +660,73 @@ def followings_post(request):
     posts = Post.objects.filter(created_by=request.user)
 
     # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_communities = following(request.user, Community)[:5]
+    following_post_templates = following(request.user, PostTemplate)[:5]
     following_posts = following(request.user, Post)[:50]
+    following_users = following(request.user, CommunityUser)[:5]
 
+    print(following_communities)
+    print(following_post_templates)
     print(following_posts)
+    print(following_users)
 
-    return render(request, 'user/followings_post.html',
+    following_objects = following(request.user)
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+
+    return render(request, 'user/following_post_v2.html',
                   context={
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
-                      'actor': request.user,
+                      'user': request.user,
+                      'following_users': following_users,
+                      'following_communities': following_communities,
+                      'following_post_templates': following_post_templates,
                       'following_posts': following_posts,
                       'communities': communities,
-                      'posts': posts
+                      'posts': posts,
+                      "following": following_objects,
+                      "ctype_community": ctype_community,
+                      "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate": ctype_posttemplate
+                  }
+                  )
+
+
+def followings_post_template(request):
+    communities = Community.objects.filter(joined_users=request.user)
+    posts = Post.objects.filter(created_by=request.user)
+
+    # https://django-activity-stream.readthedocs.io/en/latest/_modules/actstream/managers.html#FollowManager.following
+    following_communities = following(request.user, Community)[:5]
+    following_post_templates = following(request.user, PostTemplate)[:50]
+    following_posts = following(request.user, Post)[:0]
+    following_users = following(request.user, CommunityUser)[:5]
+
+    print(following_communities)
+    print(following_post_templates)
+    print(following_posts)
+    print(following_users)
+
+    following_objects = following(request.user)
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+
+    return render(request, 'user/following_posttemplate_v2.html',
+                  context={
+                      'ctype': ContentType.objects.get_for_model(USER_MODEL),
+                      'user': request.user,
+                      'following_users': following_users,
+                      'following_communities': following_communities,
+                      'following_post_templates': following_post_templates,
+                      'following_posts': following_posts,
+                      'communities': communities,
+                      'posts': posts,
+                      "following": following_objects,
+                      "ctype_community": ctype_community,
+                      "ctype_post": ctype_post, "ctype_user": ctype_user, "ctype_posttemplate": ctype_posttemplate
                   }
                   )
 
@@ -645,12 +744,22 @@ def followers(request):
     print(user_followers_ids)
     print(followers_usernames)
 
-    return render(request, 'user/followers.html',
+    following_objects = following(request.user)
+    ctype_community = ContentType.objects.get_for_model(Community)
+    ctype_post = ContentType.objects.get_for_model(Post)
+    ctype_posttemplate = ContentType.objects.get_for_model(PostTemplate)
+    ctype_user = ContentType.objects.get_for_model(USER_MODEL)
+
+    return render(request, 'user/followers_v2.html',
                   context={
                       'ctype': ContentType.objects.get_for_model(USER_MODEL),
                       'followers': followers_usernames,
                       'communities': communities,
-                      'posts': posts
+                      'posts': posts,
+                      "following": following_objects,
+                      'ctype_community': ctype_community,
+                      'ctype_post': ctype_post, 'ctype_user': ctype_user, 'ctype_posttemplate': ctype_posttemplate,
+                      'user': request.user
                   }
                   )
 

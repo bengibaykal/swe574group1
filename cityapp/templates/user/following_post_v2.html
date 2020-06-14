@@ -1,0 +1,110 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+{% block head_css %}
+    <style>
+        .h-100 {
+            height: auto !important;
+        }
+
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+        }
+    </style>
+{% endblock %}
+
+
+{% block wrapper %}
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h1 mb-0 text-gray-800">Following List - All Posts</h1>
+        </div>
+
+    <!-- Post -->
+
+
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
+
+    </div>
+    <div class="row">
+        <div class="col-lg-12 mb-12" style="display: none" id="follow-success">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body">
+                    Successfully Followed
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 mb-12" style="display: none" id="unfollow-success">
+                <div class="card bg-success text-white shadow">
+                    <div class="card-body">
+                        Successfully Unfollowed
+                    </div>
+                </div>
+            </div>
+            </br>
+            </br>
+            </br>
+            {% if following_posts|length == 0 %}
+                <div class="col-xl-auto col-md-auto mb-auto">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <a href="{% url "community:popular_items" %}">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">You Are Not Following Any Posts</div>
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Click Here To Find out Something Interesting</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+            {% for item in following_posts %}
+                <div class="col-lg-auto">
+                    {% csrf_token %}
+                    <div class="card shadow mb-auto">
+                        <!-- Card Header - Dropdown -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">{{ item.name }}</h6>
+                            <div class="dropdown no-arrow">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                     aria-labelledby="dropdownMenuLink">
+                                    <div class="dropdown-header">Actions</div>
+                                    <!-- Unfollow Community -->
+                                    <a class="dropdown-item"
+                                       href="#"
+                                       onclick="unfollow_post({{ item.id }});">Unfollow
+                                        Post</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card Body -->
+                        <div class="card-body" id="{{ item.name }}description">
+                            Community {{ item.community.name }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+         {% endif %}
+        </div>
+    </div>
+    <br>
+
+{% endblock %}
+
+
+</html>
