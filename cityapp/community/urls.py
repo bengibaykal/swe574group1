@@ -40,7 +40,10 @@ urlpatterns = [
     path('flag-appropriate', FlagPostAsAppropriate.as_view(), name="flag-post-appropriate"),
     path('user-posts/<int:user_id>', UserCreatedPostsTemplateView.as_view(), name="user-posts"),
     path('popularitems', PopularItems, name="popular_items"),
-
+    path('popularitems/user', PopularItems_User, name="popular_items_user"),
+    path('popularitems/community', PopularItems_Community, name="popular_items_community"),
+    path('popularitems/posttemplate', PopularItems_PostTemplate, name="popular_items_posttemplate"),
+    path('popularitems/post', PopularItems_Post, name="popular_items_post"),
     path('google587629e753de506e.html', GoogleVerify.as_view(), name="google-verify"),
     # Override From <Actstream Url> In Order To Enable <User Stopped Following> Notification
     url(

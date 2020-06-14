@@ -22,9 +22,10 @@
 
         <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h1 mb-0 text-gray-800">Your Followers</h1>
+            <h1 class="h1 mb-0 text-gray-800">You Should Definitely Follow - Communities</h1>
         </div>
 
+    <!-- Community -->
 
     <!-- Begin Page Content -->
     <div class="container-fluid">
@@ -49,29 +50,13 @@
             </br>
             </br>
             </br>
-            {% if followers|length == 0 %}
-                <div class="col-xl-auto col-md-auto mb-auto">
-                    <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">You Are Not Followed by Anyone Right Now</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-            {% for item in followers %}
-                <div class="col-lg-auto">
+            {% for item in popular_communities %}
+                <div class="col-lg-4">
                     {% csrf_token %}
-                    <div class="card shadow mb-auto">
+                    <div class="card shadow mb-4">
                         <!-- Card Header - Dropdown -->
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">{{ item.username }}</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Community: {{ item }}</h6>
                             <div class="dropdown no-arrow">
                                 <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -79,31 +64,34 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                                      aria-labelledby="dropdownMenuLink">
-                                    <div class="dropdown-header">Actions</div>
-                                    <!-- Follow User -->
+                                    <div class="dropdown-header">Created By: {{ item.created_by }}</div>
+                                    <!-- Follow Community -->
+
+                                    <div class="dropdown-header"></i>Actions:</div>
                                     {% if item not in following %}
                                         <a class="dropdown-item"
                                            href="#"
-                                           onclick="follow({{ item.id }});">Follow User</a>
+                                           onclick="follow_community({{ item.id }});">Follow Community</a>
                                     {% else %}
                                         <a class="dropdown-item"
                                            href="#"
-                                           onclick="unfollow({{ item.id }});">Unfollow User</a>
+                                           onclick="unfollow_community({{ item.id }});">Unfollow Community</a>
                                     {% endif %}
+
                                 </div>
                             </div>
                         </div>
                         <!-- Card Body -->
-                        <div class="card-body" id="{{ item.username }}description">
-                            Last Login: {{ item.last_login }}
+                        <div class="card-body" id="{{ item }}description">
+                            Number of Posts: {{ item.number_of_posts }}
                         </div>
                     </div>
                 </div>
             {% endfor %}
-         {% endif %}
         </div>
     </div>
     <br>
+
 
 {% endblock %}
 
