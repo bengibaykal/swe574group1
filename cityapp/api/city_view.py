@@ -16,5 +16,5 @@ class GetCityInformation(GenericAPIView):
     def post(self, request, *args, **kwargs):
         city = request.POST.get("city")
         r = requests.get(
-            "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=" + city + "&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=AIzaSyDX0K8j8RSzk2VyXi3Eks1cy-muY2FmD50")
+            "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=" + city + "&inputtype=textquery&fields=photos,formatted_address,name,rating,opening_hours,geometry&key=AIzaSyDX0K8j8RSzk2VyXi3Eks1cy-muY2FmD50&language=en")
         return JsonResponse({"message": r.json()}, status=200)
