@@ -1048,7 +1048,7 @@
                 });
                 $.ajax({
                     type: "POST",
-                    url: "http://127.0.0.1:8000/api/annotations/create",
+                    url: "http://51.116.173.70/api/annotations/create",
                     data: JSON.stringify({annotation: imageAnnotateContext}),
                     csrfmiddlewaretoken: "{{ csrf_token }}",
                     dataType: "json",
