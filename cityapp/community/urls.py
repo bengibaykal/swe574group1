@@ -3,7 +3,6 @@ from community.views import *
 from django.conf.urls import url
 from django.urls import path
 
-
 app_name = 'community'
 
 urlpatterns = [
@@ -46,6 +45,7 @@ urlpatterns = [
     path('popularitems/post', PopularItems_Post, name="popular_items_post"),
     path('google587629e753de506e.html', GoogleVerify.as_view(), name="google-verify"),
     path('search', AdvancedSearchPage.as_view(), name="search-page"),
+    path('delete-post/<int:post_id>', product_delete_rest_endpoint, name="delete-post"),
     # Override From <Actstream Url> In Order To Enable <User Stopped Following> Notification
     url(
         r'^unfollow/(?P<content_type_id>[^/]+)/(?P<object_id>[^/]+)/(?:(?P<flag>[^/]+)/)?$',
@@ -59,6 +59,5 @@ urlpatterns = [
         {'actor_only': False, 'do_follow': False},
         name='unfollow_all'
     )
-
 
 ]

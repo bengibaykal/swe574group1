@@ -27,6 +27,7 @@ from rest_framework import status
 from rest_framework.generics import GenericAPIView, RetrieveAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from datetime import datetime
@@ -1256,3 +1257,13 @@ class AdvancedSearchPage(APIView):
         return Response(
             status=status.HTTP_200_OK
         )
+
+
+def product_delete_rest_endpoint(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if post.created_by.id == request.user.id:
+        post.delete()
+    else:
+        return redirect("community:user-posts", request.user.id)
+    return redirect("community:user-posts", request.user.id)
+

@@ -31,4 +31,6 @@ urlpatterns = [
     path('search-city/', GetCityInformation.as_view(), name="search-city"),
     path('advanced-search/', AdvancedSearch.as_view(), name="advanced-search"),
 
+
+
 ]
