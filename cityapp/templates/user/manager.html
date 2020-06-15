@@ -805,63 +805,64 @@
                     console.log(data);
                     var uripage = document.documentURI;
                     for (var i = 0; i < 100; i++) {
-                        if (data[i].annotation != "undefined"){
-                        var given = data[i].annotation;
-                        console.log("i" + i);
-                        console.log("note anno  " + given.body.value );
-                        console.log("value  " + given.target.selector.value );
-                        console.log("source  " + given.target.source );
-                        console.log("uripage  " + uripage );
-                        if ( given.target.source.toString() == uripage ){
-                            if(given.target.selector.type == "SvgSelector"){
-                                
-                                $(".jcrop-holder").remove();
-                                document.getElementById("target").style.visibility = "visible";
-                                document.getElementById("target").style.display = "block";
+                        if (data[i].annotation !== "undefined"){
+                            var given = data[i].annotation;
+                            console.log("i" + i);
+                            console.log("note anno  " + given.body.value );
+                            console.log("value  " + given.target.selector.value );
+                            console.log("source  " + given.target.source );
+                            console.log("uripage  " + uripage );
 
-                                var mediaurl = given.target.selector.value.split("|")[0];
-                                var mediaclass = "." + mediaurl;
-                                var xpos = given.target.selector.value.split("|")[1].split(",")[0];
-                                var ypos = given.target.selector.value.split("|")[1].split(",")[2];
-                                var hei = given.target.selector.value.split("|")[1].split(",")[5];
-                                var wid = given.target.selector.value.split("|")[1].split(",")[4];
+                            if ( given.target.source.toString() == uripage ){
+                                if(given.target.selector.type == "SvgSelector"){
 
-                                var boxid = "box" + i;
-                                var boxidpoint = "#" + boxid;
+                                    $(".jcrop-holder").remove();
+                                    document.getElementById("target").style.visibility = "visible";
+                                    document.getElementById("target").style.display = "block";
 
-                                $(".wrapper").append("<div class='box' id=" + "'box" + i + "'" + "onmouseover='description()' onmouseout='outdesc()' ></div>");
-                                $(boxidpoint).append("<span class='description' id='description' style='background-color: white' >"+
-                                                        given.body.value  +"</span>");
+                                    var mediaurl = given.target.selector.value.split("|")[0];
+                                    var mediaclass = "." + mediaurl;
+                                    var xpos = given.target.selector.value.split("|")[1].split(",")[0];
+                                    var ypos = given.target.selector.value.split("|")[1].split(",")[2];
+                                    var hei = given.target.selector.value.split("|")[1].split(",")[5];
+                                    var wid = given.target.selector.value.split("|")[1].split(",")[4];
 
-                                document.getElementById(boxid).style.top = ypos+"px";
-                                document.getElementById(boxid).style.left = xpos+"px";
-                                document.getElementById(boxid).style.width = wid+"px";
-                                document.getElementById(boxid).style.height = hei+"px";
-                                document.getElementById(boxid).style.visibility = "visible";
-                                document.getElementById(boxid).style.position = "absolute";
+                                    var boxid = "box" + i;
+                                    var boxidpoint = "#" + boxid;
 
-                                document.getElementsByClassName("jcrop-holder")[0].style.visibility = "hidden";
-                                document.getElementsByClassName("jcrop-tracker")[0].style.visibility = "hidden";
-                           
+                                    $(".wrapper").append("<div class='box' id=" + "'box" + i + "'" + "onmouseover='description()' onmouseout='outdesc()' ></div>");
+                                    $(boxidpoint).append("<span class='description' id='description' style='background-color: white' >"+
+                                                            given.body.value  +"</span>");
 
-                            }else {
-                            var divtext = given.target.selector.value;
-                            var id1 =  divtext.split("|")[0].split("'")[1].split("'"[0]);
-                            var text1 = divtext.split("|")[1];
-                            //https://jsfiddle.net/pawmbude/
-                            var text = document.getElementById(id1);
-                            if(text !== undefined && text !== null ){
-                                var searchInput = text1
-                                var regex = new RegExp(text1, 'gi')
-                                text.innerHTML = text.innerText.replace(regex, function(str) {
-                                    return "<span id='spananno' class='" + i + "'" + "style='background-color: lightblue;' onmouseover='description()' onmouseout='outdesc()' >" + str + "</span>"
-                                })
-                                var classy = "." + i
-                                //add invisible
-                                $(classy).append("<span class='description' id='description' style='background-color: lightblue' >"+  data[i].annotation.body.value  +"</span>");
-                            }
-                           }
-                        }else{}
+                                    document.getElementById(boxid).style.top = ypos+"px";
+                                    document.getElementById(boxid).style.left = xpos+"px";
+                                    document.getElementById(boxid).style.width = wid+"px";
+                                    document.getElementById(boxid).style.height = hei+"px";
+                                    document.getElementById(boxid).style.visibility = "visible";
+                                    document.getElementById(boxid).style.position = "absolute";
+
+                                    document.getElementsByClassName("jcrop-holder")[0].style.visibility = "hidden";
+                                    document.getElementsByClassName("jcrop-tracker")[0].style.visibility = "hidden";
+
+
+                                }else {
+                                    var divtext = given.target.selector.value;
+                                    var id1 =  divtext.split("|")[0].split("'")[1].split("'"[0]);
+                                    var text1 = divtext.split("|")[1];
+                                    //https://jsfiddle.net/pawmbude/
+                                    var text = document.getElementById(id1);
+                                    if(text !== undefined && text !== null ){
+                                        var searchInput = text1
+                                        var regex = new RegExp(text1, 'gi')
+                                        text.innerHTML = text.innerText.replace(regex, function(str) {
+                                            return "<span id='spananno' class='" + i + "'" + "style='background-color: lightblue;' onmouseover='description()' onmouseout='outdesc()' >" + str + "</span>"
+                                        })
+                                        var classy = "." + i
+                                        //add invisible
+                                        $(classy).append("<span class='description' id='description' style='background-color: lightblue' >"+  data[i].annotation.body.value  +"</span>");
+                                 }
+                               }
+                            }else{}
                     }
                 }
                 }
