@@ -9,7 +9,7 @@
         <!-- Page Heading -->
 
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800">Community: {{ community.name }}</h1>
+            <h1 class="h3 mb-0 text-gray-800">Posts of Community: {{ community.name }}</h1>
             {% if is_user_joined %}
                 <div style="float: right">
                     <a class="" href="{% url "community:posts-create" community.id %}">
