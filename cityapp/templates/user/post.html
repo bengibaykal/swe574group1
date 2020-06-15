@@ -187,6 +187,7 @@
                         }
                         var li = document.createElement("li");
                         li.setAttribute("class", "list-group-item")
+                        li.setAttribute("id", "list-group-item"+i) //dynamic id will be used
                         li.appendChild(document.createTextNode(username.toUpperCase()+":  " + commentsJSON[i].fields.content));
                         li.appendChild(document.createElement("br"));
                         li.appendChild(document.createTextNode("Date: " + commentsJSON[i].fields.created.split("T")[0] +" " +commentsJSON[i].fields.created.split("T")[1].split(".")[0]))
