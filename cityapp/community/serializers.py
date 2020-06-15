@@ -9,6 +9,15 @@ class DataTypeSerializer(serializers.ModelSerializer):
         fields = ("name", "description", "community")
 
 
+class DataTypeSearchSerializer(serializers.ModelSerializer):
+    community_name = serializers.CharField(source='community.name')
+    tags_name = serializers.CharField(source='tags.name')
+
+    class Meta:
+        model = PostTemplate
+        fields = ("name", "description", "community_name", "tags_name")
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -49,6 +58,7 @@ class CommentCreateSerializer_ForSpecificPost(serializers.ModelSerializer):
             "content"
         ]
 
+
 # To Get Username Ilo User ID on Comment List Serializer
 class CommunityUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,6 +67,7 @@ class CommunityUserSerializer(serializers.ModelSerializer):
             "id",
             "username"
         ]
+
 
 # To Get Post Details Ilo Post ID on Comment List Serializer
 class PostSerializer(serializers.ModelSerializer):
@@ -68,6 +79,7 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentListSerializer(serializers.ModelSerializer):
     created_by = CommunityUserSerializer()
     post = PostSerializer()
+
     class Meta:
         model = Comment
         fields = "__all__"

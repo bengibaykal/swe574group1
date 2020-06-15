@@ -1,0 +1,87 @@
+{% extends "user/manager.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+{% block wrapper %}
+    <body>
+    <!-- Masthead -->
+    <div class="row">
+        {% csrf_token %}
+        <div class="col-md-6 col-lg-6 col-xl-6 mx-auto" style="margin-top: 50px">
+            <h1 class="h3 mb-0 text-gray-800">Search for Any Keywords</h1>
+        </div>
+        <div class="col-md-10 col-lg-8 col-xl-7 mx-auto" style="margin-top: 20px">
+            <form onsubmit="">
+                <div class="form-row">
+                    <div class="col-12 col-md-9 mb-2 mb-md-0">
+                        <input id="search-input" type="Search" class="form-control form-control-lg"
+                               placeholder="Search">
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <button id="search" type="submit" class="btn btn-block btn-lg btn-primary">Search
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 col-lg-10 col-xl-10 mx-auto" style="margin-top: 100px; ">
+            <table id="search_table_id" class="display" style="width: 100%;display: none;">
+                <thead>
+                <tr>
+                    <th>Data Type Name</th>
+                    <th>Data Type Description</th>
+                    <th>Community</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><a href="#">test</a></td>
+                    <td>test</td>
+                    <td>test</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </body>
+    <script>
+
+        $('#search').click(function () {
+            var q = $("#search-input").val();
+            var csrftoken = $("input[name='csrfmiddlewaretoken']").val();
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+
+            $.ajax({
+                method: "GET",
+                url: "{% url "api:advanced-search" %}",
+                data: {q: q},
+                success: function (data) {
+                    $('#search_table_id tbody').empty();
+                    for (var i = 0; i < data.length; i++) {
+                        $('#search_table_id tbody').append('<tr><td>' + data[i].name + '</td><td>' + data[i].description + '</td><td>' + data[i].community_name + '</td></tr>');
+                    }
+                    $('#search_table_id').DataTable();
+                    $("#search_table_id").show();
+                    console.log(data)
+
+                },
+            });
+            return false;
+        })
+
+        ;
+
+    </script>
+{% endblock %}
+
+</html>

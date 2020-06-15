@@ -45,6 +45,7 @@ urlpatterns = [
     path('popularitems/posttemplate', PopularItems_PostTemplate, name="popular_items_posttemplate"),
     path('popularitems/post', PopularItems_Post, name="popular_items_post"),
     path('google587629e753de506e.html', GoogleVerify.as_view(), name="google-verify"),
+    path('search', AdvancedSearchPage.as_view(), name="search-page"),
     # Override From <Actstream Url> In Order To Enable <User Stopped Following> Notification
     url(
         r'^unfollow/(?P<content_type_id>[^/]+)/(?P<object_id>[^/]+)/(?:(?P<flag>[^/]+)/)?$',

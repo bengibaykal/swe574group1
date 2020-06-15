@@ -873,29 +873,6 @@ class UserCreatedPostsTemplateView(APIView):
         return Response({'posts': posts, "user": request.user, "communities": communities, "user_page": user_page})
 
 
-class DashboardSearch(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def get(self, request):
-        query = self.request.query_params.get('query', None)
-        query_post_templates = PostTemplate.objects.filter(
-            Q(custom_template__contains=query) | Q(tags__name__contains=query) | Q(name__contains=query) | Q(
-                description__contains=query) | Q(
-                community__name__contains=query))
-
-        query_posts = Post.objects.filter(
-            Q(post_template__in=query_post_templates) | Q(name__contains=query) | Q(description__contains=query) | Q(
-                community__name__contains=query) | Q(tags__name__contains=query))
-
-        query_communities = Community.objects.filter(
-            Q(name__contains=query) | Q(description__contains=query) | Q(tags__name__contains=query))
-
-        return JsonResponse(
-            {'query_post_templates': query_post_templates, "query_posts": query_posts.user,
-             "query_communities": query_communities,
-             })
-
-
 def PopularItems(request):
     communities = Community.objects.filter(joined_users=request.user)
     posts = Post.objects.all()
@@ -1032,6 +1009,7 @@ def PopularItems_User(request):
                       'user': request.user
                   }
                   )
+
 
 def PopularItems_Community(request):
     communities = Community.objects.filter(joined_users=request.user)
@@ -1239,6 +1217,7 @@ def PopularItems_Post(request):
                   }
                   )
 
+
 # Override From <Actstream View> In Order To Enable <User Stopped Following> Notification
 def follow_unfollow(request, content_type_id, object_id, flag=None, do_follow=True, actor_only=True):
     """
@@ -1262,6 +1241,16 @@ def follow_unfollow(request, content_type_id, object_id, flag=None, do_follow=Tr
 class GoogleVerify(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'google587629e753de506e.html'
+
+    def get(self, request):
+        return Response(
+            status=status.HTTP_200_OK
+        )
+
+
+class AdvancedSearchPage(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'user/advanced_search.html'
 
     def get(self, request):
         return Response(
