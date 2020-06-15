@@ -9,19 +9,19 @@ class DataTypeSerializer(serializers.ModelSerializer):
         fields = ("name", "description", "community")
 
 
-class DataTypeSearchSerializer(serializers.ModelSerializer):
-    community_name = serializers.CharField(source='community.name')
-    tags_name = serializers.CharField(source='tags.name')
-
-    class Meta:
-        model = PostTemplate
-        fields = ("name", "description", "community_name", "tags_name")
-
-
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ("id", "name")
+
+
+class DataTypeSearchSerializer(serializers.ModelSerializer):
+    community_name = serializers.CharField(source='community.name')
+    tag = TagSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = PostTemplate
+        fields = ("name", "description", "community", "community_name", "tag")
 
 
 class CommunitySerializer(serializers.ModelSerializer):

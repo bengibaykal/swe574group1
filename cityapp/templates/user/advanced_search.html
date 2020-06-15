@@ -33,6 +33,7 @@
                     <th>Data Type Name</th>
                     <th>Data Type Description</th>
                     <th>Community</th>
+                    <th>Tags</th>
 
                 </tr>
                 </thead>
@@ -68,7 +69,7 @@
                 success: function (data) {
                     $('#search_table_id tbody').empty();
                     for (var i = 0; i < data.length; i++) {
-                        $('#search_table_id tbody').append('<tr><td>' + data[i].name + '</td><td>' + data[i].description + '</td><td>' + data[i].community_name + '</td></tr>');
+                        $('#search_table_id tbody').append('<tr><td>' + data[i].name + '</td><td>' + data[i].description + '</td><td><a href=/communities/'+data[i].community+'> '+ data[i].community_name +'</a>' +'</td><td>' + data[i].tag + '</td></tr>');
                     }
                     $('#search_table_id').DataTable();
                     $("#search_table_id").show();
