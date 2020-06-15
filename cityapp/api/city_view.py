@@ -34,7 +34,7 @@ class AdvancedSearch(ListAPIView):
         print(q)
         print(len(queryset))
         if q is not None:
-            queryset = queryset.filter(Q(name__contains=q) | Q(tags__name__contains=q) | Q(description__contains=q) | Q(
-                community__name__contains=q) | Q(custom_template__contains=q))
+            queryset = queryset.filter(Q(name__icontains=q) | Q(tags__name__icontains=q) | Q(description__icontains=q) | Q(
+                community__name__icontains=q) | Q(custom_template__icontains=q))
         print(len(queryset))
         return queryset
