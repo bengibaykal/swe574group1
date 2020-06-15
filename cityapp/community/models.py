@@ -130,6 +130,14 @@ class Post(TimeStamped):
     def __str__(self):
         return smart_unicode(self.name)
 
+    def save(self, *args, **kwargs):
+        city = City.objects.filter(id=self.community.city_id.id).first()
+        lat = city.geolocation.split(',')[0]
+        lng = city.geolocation.split(',')[1]
+        self.latitude = lat
+        self.longitude = lng
+        super(Post, self).save(*args, **kwargs)
+
 
 # Creating Action Instances by Using Django Signals & Actstream Action
 def save_post(sender, instance, **kwargs):
