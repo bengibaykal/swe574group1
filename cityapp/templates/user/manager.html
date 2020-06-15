@@ -414,7 +414,8 @@
                                 <div class="card shadow mb-4">
                                     <!-- Card Header - Dropdown -->
                                     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                        <h6 class="m-0 font-weight-bold text-primary">Post: {{ post.name }} |
+                                        <h6 class="m-0 font-weight-bold text-primary">
+                                                <span id="{{ post.id }}-post"> Post: {{ post.name }} </span>|
                                             <span style="font-size: 11px;color: #0f0f0f"
                                                   id="{{ post.id }}"> Community:{{ post.community.name }}</span> |
                                             <span><i class="fas fa-flag-checkered"></i> {{ post.flags }}</span>
@@ -1013,6 +1014,7 @@
                     }
                 }
             });
+
             $.ajax({
                 method: "POST",
                 url: "{% url "community:flag-post-appropriate" %}",
@@ -1025,9 +1027,11 @@
         };
 
         var listenAudioVersionOfPost = function (post_id) {
+            var postIdL = document.getElementById(post_id+"-post");
+            var PostName = postIdL.innerHTML;
             var input = document.getElementById(post_id);
             var CommunityName = input.innerHTML;
-            var msgCommunityName = new SpeechSynthesisUtterance(CommunityName);
+            var msgCommunityName = new SpeechSynthesisUtterance(PostName + ",  " + CommunityName);
             window.speechSynthesis.speak(msgCommunityName);
 
             var input2 = document.getElementById(post_id + "description");
