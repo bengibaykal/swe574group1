@@ -170,6 +170,12 @@
         </div>
 
         <li class="nav-item">
+            <a class="nav-link" href="{% url "community:search-page" %}">
+                <i class="fas fa-user-circle"></i>
+                <span>Advanced Search</span></a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="{% url "community:dashboard" %}">
                 <i class="fas fa-user-circle"></i>
                 <span>Dashboard - Profile</span></a>
@@ -792,9 +798,9 @@
                 txt = "You pressed Cancel!";
             }
         };
-        
+
         function showAnnotations() {
-            
+
 
             $(document).ready( function () {
 
@@ -909,8 +915,8 @@
             });
             return false;
         };
-        
-        
+
+
 
         var unfollow_post = function (post_id) {
             $.ajax({

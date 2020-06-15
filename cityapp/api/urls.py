@@ -29,5 +29,6 @@ urlpatterns = [
     path('comment/delete/<pk>/', CommentDeleteAPIView.as_view(), name="comment-delete"),
     path('comment/update/<pk>/', CommentUpdateAPIView.as_view(), name="comment-update"),
     path('search-city/', GetCityInformation.as_view(), name="search-city"),
+    path('advanced-search/', AdvancedSearch.as_view(), name="advanced-search"),
 
 ]
