@@ -779,7 +779,7 @@
                 });
                 $.ajax({
                     type: "POST",
-                    url: "http://51.116.173.70/api/annotations/create",
+                    url: "http://20.52.48.214/api/annotations/create",
                     data: JSON.stringify({annotation: annotateContext}),
                     csrfmiddlewaretoken: "{{ csrf_token }}",
                     dataType: "json",
@@ -807,7 +807,7 @@
 
             $.ajax({
                 method: "GET",
-                url: "http://51.116.173.70/api/annotations/list/",
+                url: "http://20.52.48.214/api/annotations/list/",
                 success: function (data) {
                     console.log(data);
                     var uripage = document.documentURI;
@@ -1088,7 +1088,7 @@
                 });
                 $.ajax({
                     type: "POST",
-                    url: "http://51.116.173.70/api/annotations/create",
+                    url: "http://20.52.48.214/api/annotations/create",
                     data: JSON.stringify({annotation: imageAnnotateContext}),
                     csrfmiddlewaretoken: "{{ csrf_token }}",
                     dataType: "json",
